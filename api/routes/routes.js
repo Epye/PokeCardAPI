@@ -4,4 +4,8 @@ module.exports = function(app) {
 
 	app.route('/test').get(pokemonController.test);
 
+	app.route('/pokedex').get(pokemonController.pokedex);
+
+	app.route('/init/:userId').get(pokemonController.init);
+
 };
