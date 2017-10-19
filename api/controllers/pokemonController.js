@@ -8,6 +8,9 @@ var connection = mysql.createConnection({
   database : 'pokecard'
 });
 
+
+connection.connect();
+
 exports.test = function(req, res){
 	res.json({test: "test"});
 }
@@ -43,11 +46,21 @@ exports.init = function(req, res){
  
 	connection.query('SELECT * FROM User WHERE idUser =' + userId, function (error, results, fields) {
 	  	response = results[0];
-
-	  	connection.end();
 	  	
 		res.json(response);
 	});
-	 
-	
+}
+
+exports.login = function(req, res){
+	var mail = req.body.mail;
+
+	var response = {};
+ 
+	connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function (error, results, fields) {
+	  	if(results){
+	  		res.json(results[0]);
+	  	}else{
+	  		res.json({user: false});
+	  	}
+	});
 }

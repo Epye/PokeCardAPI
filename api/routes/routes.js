@@ -8,4 +8,6 @@ module.exports = function(app) {
 
 	app.route('/init/:userId').get(pokemonController.init);
 
+	app.route('/login').post(pokemonController.login);
+
 };
