@@ -1,8 +1,9 @@
 'use strict';
 var https = require('https');
 var mysql = require('mysql');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt-nodejs');
 const saltRounds = 10;
+
 
 var connection = mysql.createConnection({
 	host: 'localhost',
@@ -35,24 +36,45 @@ exports.login = function(req, res) {
 
 	connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
 		if(results) {
-			bcrypt.compare(password, results[0].password, function(err, res) {
-				if(res == true) {
-					res.json(results[0]);
-				} else {
-					res.json({ password: false });
-				}
-			});
+			if(bcrypt.compareSync(password, results[0].password)) {
+				res.json(results[0]);
+			} else {
+				res.json({ password: false });
+			}
 		} else {
 			res.json({ user: false });
 		}
 	});
 }
 
-exports.signin = function(req, res) {
+exports.signup = function(req, res) {
 	var mail = req.body.mail;
 	var password = req.body.password;
+	password = bcrypt.hashSync(password);
 
 	var response = {};
 
-	connection.query('INSERT ')
+	connection.query('INSERT INTO User (mail, password) VALUES ("' + mail + '", "' + password + '")', function(error, results, fiels) {
+		console.log(results);
+		res.json({ok: "ok"});
+	});
+}
+
+exports.verify = function(req, res){
+	var mail = req.body.mail;
+	var password = req.body.password;
+
+	connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
+		if(results) {
+			res.json(results[0]);
+		} else {
+			connection.query('INSERT INTO User (mail, password) VALUES ("' + mail + '", "' + password + '")', function(error, results, fiels) {
+				connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
+					if(results) {
+						res.json(results[0]);
+					}
+				});
+			});
+		};
+	});
 }

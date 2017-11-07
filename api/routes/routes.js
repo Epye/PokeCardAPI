@@ -9,6 +9,8 @@ module.exports = function(app) {
 
 	app.route('/login').post(authController.login);
 
-	app.route('/signup').post(authController.login);
+	app.route('/signup').post(authController.signup);
+
+	app.route('/verify').post(authController.verify);
 
 };
