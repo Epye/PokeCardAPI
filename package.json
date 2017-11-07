@@ -21,6 +21,8 @@
     "nodemon": "^1.12.1"
   },
   "dependencies": {
+    "bcrypt": "^1.0.3",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "mysql": "^2.15.0"
