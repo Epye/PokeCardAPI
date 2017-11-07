@@ -5,8 +5,6 @@ module.exports = function(app) {
 
 	app.route('/pokedex').get(pokemonController.pokedex);
 
-	app.route('/init/:userId').get(authController.init);
-
 	app.route('/login').post(authController.login);
 
 	app.route('/signup').post(authController.signup);

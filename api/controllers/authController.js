@@ -14,30 +14,19 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
-exports.init = function(req, res) {
-	var userId = req.params.userId;
-
-	connection.connect();
-
-	var response = {};
-
-	connection.query('SELECT * FROM User WHERE idUser =' + userId, function(error, results, fields) {
-		response = results[0];
-
-		res.json(response);
-	});
-}
-
 exports.login = function(req, res) {
+	console.log("/login");
 	var mail = req.body.mail;
 	var password = req.body.password;
 
 	var response = {};
 
 	connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
-		if(results) {
+		if(results.length > 0) {
 			if(bcrypt.compareSync(password, results[0].password)) {
-				res.json(results[0]);
+				var response = results[0];
+				delete response.password;
+				res.json(response);
 			} else {
 				res.json({ password: false });
 			}
@@ -48,30 +37,43 @@ exports.login = function(req, res) {
 }
 
 exports.signup = function(req, res) {
+	console.log("/signup");
 	var mail = req.body.mail;
 	var password = req.body.password;
 	password = bcrypt.hashSync(password);
+	
 
 	var response = {};
 
 	connection.query('INSERT INTO User (mail, password) VALUES ("' + mail + '", "' + password + '")', function(error, results, fiels) {
-		console.log(results);
-		res.json({ok: "ok"});
+		connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
+			if(results) {
+				var response = results[0];
+				delete response.password;
+				res.json(response);
+			}
+		});
 	});
 }
 
 exports.verify = function(req, res){
+	console.log("/verify");
+	console.log(req.body)
 	var mail = req.body.mail;
 	var password = req.body.password;
 
 	connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
-		if(results) {
-			res.json(results[0]);
+		if(results.length > 0) {
+			var response = results[0];
+			delete response.password;
+			res.json(response);
 		} else {
 			connection.query('INSERT INTO User (mail, password) VALUES ("' + mail + '", "' + password + '")', function(error, results, fiels) {
 				connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
 					if(results) {
-						res.json(results[0]);
+						var response = results[0];
+						delete response.password;
+						res.json(response);
 					}
 				});
 			});

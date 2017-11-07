@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johanlannier/PokeCardAPI.git"
+    "url": "git+https://github.com/nquillon/PokeCardAPI.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/johanlannier/PokeCardAPI/issues"
+    "url": "https://github.com/nquillon/PokeCardAPI/issues"
   },
-  "homepage": "https://github.com/johanlannier/PokeCardAPI#readme",
+  "homepage": "https://github.com/nquillon/PokeCardAPI#readme",
   "devDependencies": {
     "nodemon": "^1.12.1"
   },
