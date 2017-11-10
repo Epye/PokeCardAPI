@@ -12,6 +12,16 @@ var connection = mysql.createConnection({
 	database: 'pokecard'
 });
 
-module.pseudoController = function(req, res){
+exports.editPseudo = function(req, res){
 	console.log('/opion/editPseudo');
+
+	var idUser = req.body.idUser;
+	var pseudo = req.body.pseudo;
+
+	console.log(idUser, pseudo)
+
+	connection.query('UPDATE User SET pseudo="' + pseudo + '" WHERE idUser=' + idUser, function(error, results, fields){
+		res.status(200);
+		res.send();
+	})
 }

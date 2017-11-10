@@ -2,6 +2,7 @@
 module.exports = function(app) {
 	var pokemonController = require('../controllers/pokemonController');
 	var authController = require('../controllers/authController');
+	var optionController = require('../controllers/optionController');
 
 	//AUTHENTIFICATION
 	app.route('/login').post(authController.login);
@@ -16,5 +17,5 @@ module.exports = function(app) {
 	//QUIZZ
 
 	//OPTION
-	app.route('options/editPseudo').post(optionController.editPseudo);
+	app.route('/option/editpseudo').post(optionController.editPseudo);
 };

@@ -16,21 +16,23 @@ connection.connect();
 
 exports.login = function(req, res) {
 	console.log("/login");
-	var mail = req.body.mail;
+	var pseudo = req.body.pseudo;
 	var password = req.body.password;
 
 	var response = {};
 
-	connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
+	connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 		if(results.length > 0) {
 			if(bcrypt.compareSync(password, results[0].password)) {
 				var response = results[0];
 				delete response.password;
 				res.json(response);
 			} else {
+				res.status(400);
 				res.json({ password: false });
 			}
 		} else {
+			res.status(400);
 			res.json({ user: false });
 		}
 	});
@@ -38,39 +40,46 @@ exports.login = function(req, res) {
 
 exports.signup = function(req, res) {
 	console.log("/signup");
-	var mail = req.body.mail;
+	var pseudo = req.body.pseudo;
 	var password = req.body.password;
 	password = bcrypt.hashSync(password);
 	
 
 	var response = {};
-
-	connection.query('INSERT INTO User (mail, password) VALUES ("' + mail + '", "' + password + '")', function(error, results, fiels) {
-		connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
-			if(results) {
-				var response = results[0];
-				delete response.password;
-				res.json(response);
-			}
-		});
+	connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
+		if(results.length == 0) {
+			connection.query('INSERT INTO User (pseudo, password, profilePicture) VALUES ("' + pseudo + '", "' + password + '", "https://eternia.fr/public/media/sl/sprites/formes/025_kanto.png")', function(error, results, fiels) {
+				connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
+					if(results) {
+						var response = results[0];
+						delete response.password;
+						res.json(response);
+					}
+				});
+			});
+		}else{
+			res.status(400);
+			res.json({"pseudo": false});
+		}
 	});
 }
 
 exports.verify = function(req, res){
 	console.log("/verify");
-	console.log(req.body)
-	var mail = req.body.mail;
+	var idAccount = req.body.idUser;
+	var pseudo = req.body.pseudo;
 	var password = req.body.password;
+	var profilePicture = req.body.profilePicture;
 
-	connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
+	connection.query('SELECT * FROM User WHERE idAccount LIKE "' + idAccount + '"', function(error, results, fields) {
 		if(results.length > 0) {
 			var response = results[0];
 			delete response.password;
 			res.json(response);
 		} else {
-			connection.query('INSERT INTO User (mail, password) VALUES ("' + mail + '", "' + password + '")', function(error, results, fiels) {
-				connection.query('SELECT * FROM User WHERE mail LIKE "' + mail + '"', function(error, results, fields) {
-					if(results) {
+			connection.query('INSERT INTO User (idAccount, pseudo, password, profilePicture) VALUES ("' + idAccount + '", "' + pseudo + '", "' + password + '", "' + profilePicture + '")', function(error, results, fiels) {
+				connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
+					if(results.length > 0) {
 						var response = results[0];
 						delete response.password;
 						res.json(response);

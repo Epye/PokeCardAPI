@@ -35,7 +35,7 @@ Format Retour:
  	"listPokemon": String, 
  	"pokecoin": Int
  }
- - si Pseudo introuvalble: 
+ - si Pseudo introuvable: 
  {
  	pseudo: False
  }
