@@ -33,3 +33,7 @@ exports.pokedex = function(req, res) {
 
 	request.end();
 }
+
+exports.pokemonDetails = function(req, res){
+	
+}

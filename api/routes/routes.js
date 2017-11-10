@@ -11,6 +11,7 @@ module.exports = function(app) {
 
 	//POKEMON
 	app.route('/pokedex').get(pokemonController.pokedex);
+	app.route('/pokemon/:idPokemon').get(pokemonController.pokemonDetails);
 
 	//CARTES
 
