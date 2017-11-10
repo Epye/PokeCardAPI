@@ -3,7 +3,7 @@ var https = require('https');
 
 exports.pokedex = function(req, res) {
 
-	var options = "https://pokeapi.co/api/v2/pokedex/1/";
+	var options = "https://pokeapi.co/api/v2/pokemon/?limit=802&offset=0";
 
 	var data = "";
 
@@ -12,7 +12,18 @@ exports.pokedex = function(req, res) {
 			data += d;
 		});
 		result.on('end', function() {
-			res.json(JSON.parse(data));
+			var tmpData = JSON.parse(data);
+
+			var finalResult = {"pokedex": []};
+
+			for(var i=1; i<=802; i++){
+				finalResult.pokedex.push({
+					"id": i,
+					"name": tmpData.results[i-1].name,
+					"urlPicture": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + i + ".png"
+				});
+			}
+			res.json(finalResult);
 		});
 	});
 
