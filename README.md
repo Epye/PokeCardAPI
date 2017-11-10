@@ -21,22 +21,69 @@ l'adresse est ensuite localhost:3000
 ### POST /login:
 Route pour se connecter avec un compte.
 
-Format attendu: {pseudo: String, password: String};
+Format attendu: 
+{
+	pseudo: String, 
+	password: String
+}
+
 Format Retour: 
- - si OK: {idUser: String, pseudo: String, listPokemon: String, pokecoin: Int}
- - si Pseudo introuvalble: {pseudo: False};
- - si mauvais password: {password: False};
+ - si OK: 
+ {
+ 	"idUser": String, 
+ 	"pseudo": String, 
+ 	"listPokemon": String, 
+ 	"pokecoin": Int
+ }
+ - si Pseudo introuvalble: 
+ {
+ 	pseudo: False
+ }
+ - si mauvais password: 
+ {
+ 	password: False
+ }
 
 ### POST /signup:
 Route pour créer un compte.
 
-Format attendu: {pseudo: String, password: String};
+Format attendu: 
+{
+	"pseudo": String, 
+	"password": String
+}
+
 Format Retour: 
- - si Ok: {idUser: String, pseudo: String, listPokemon: String, pokecoin: Int}
- - si Pseudo déjà pris: {pseudo: False};
+ - si Ok: 
+ {
+ 	"idUser": String, 
+ 	"pseudo": String, 
+ 	"listPokemon": String, 
+ 	"pokecoin": Int
+ }
+ - si Pseudo déjà pris: 
+ {
+ 	"pseudo": false
+ }
 
 ### POST /verify:
+Route pour se connecter via Google ou Facebook.
 
+Format attendu: 
+{
+	"idUser": String,
+	"pseudo": String,
+	"password": String,
+	"profilePicture": String
+}
+
+Format Retour:
+{
+	"idUser": Int,
+	"pseudo": String,
+	"listPokemon": String,
+	"pokecoin": Int
+}
 
 ## Pokemon:
 
