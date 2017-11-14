@@ -28,11 +28,9 @@ exports.login = function(req, res) {
 				delete response.password;
 				res.json(response);
 			} else {
-				res.status(400);
 				res.json({ password: false });
 			}
 		} else {
-			res.status(400);
 			res.json({ user: false });
 		}
 	});
@@ -58,7 +56,6 @@ exports.signup = function(req, res) {
 				});
 			});
 		}else{
-			res.status(400);
 			res.json({"pseudo": false});
 		}
 	});
