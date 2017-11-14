@@ -26,6 +26,12 @@ exports.login = function(req, res) {
 			if(bcrypt.compareSync(password, results[0].password)) {
 				var response = results[0];
 				delete response.password;
+				if(response.cards != null){
+					response.cards = response.cards.split(";");
+				}
+				else{
+					response.cards = [];
+				}
 				res.json(response);
 			} else {
 				res.json({ password: false });
@@ -51,6 +57,7 @@ exports.signup = function(req, res) {
 					if(results) {
 						var response = results[0];
 						delete response.password;
+						response.cards = [];
 						res.json(response);
 					}
 				});
