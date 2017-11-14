@@ -27,14 +27,14 @@ exports.login = function(req, res) {
 				var response = results[0];
 				delete response.password;
 				if(response.cards != null){
-					response.cards = response.cards.split(";");
+					response.cards = response.cards.split(",");
 				}
 				else{
 					response.cards = [];
 				}
 
 				if(response.pokemon != null){
-					response.pokemon = response.pokemon.split(";");
+					response.pokemon = response.pokemon.split(",");
 				}
 				else{
 					response.pokemon = [];
@@ -95,14 +95,14 @@ exports.verify = function(req, res){
 						var response = results[0];
 						delete response.password;
 						if(response.cards != null){
-							response.cards = response.cards.split(";");
+							response.cards = response.cards.split(",");
 						}
 						else{
 							response.cards = [];
 						}
 
 						if(response.pokemon != null){
-							response.pokemon = response.pokemon.split(";");
+							response.pokemon = response.pokemon.split(",");
 						}
 						else{
 							response.pokemon = [];
