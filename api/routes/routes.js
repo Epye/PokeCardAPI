@@ -18,5 +18,6 @@ module.exports = function(app) {
 	//QUIZZ
 
 	//OPTION
-	app.route('/option/editpseudo').post(optionController.editPseudo);
+	app.route('/option/editPseudo').post(optionController.editPseudo);
+	app.route('/option/verifyPseudo').post(optionController.verifyPseudo);
 };

@@ -32,12 +32,19 @@ exports.login = function(req, res) {
 				else{
 					response.cards = [];
 				}
+
+				if(response.pokemon != null){
+					response.pokemon = response.pokemon.split(";");
+				}
+				else{
+					response.pokemon = [];
+				}
 				res.json(response);
 			} else {
-				res.json({ password: false });
+				res.json({ "pseudo": true, "password": false });
 			}
 		} else {
-			res.json({ user: false });
+			res.json({ "pseudo": false , "password": false});
 		}
 	});
 }
@@ -58,6 +65,7 @@ exports.signup = function(req, res) {
 						var response = results[0];
 						delete response.password;
 						response.cards = [];
+						response.pokemon = [];
 						res.json(response);
 					}
 				});
@@ -86,6 +94,19 @@ exports.verify = function(req, res){
 					if(results.length > 0) {
 						var response = results[0];
 						delete response.password;
+						if(response.cards != null){
+							response.cards = response.cards.split(";");
+						}
+						else{
+							response.cards = [];
+						}
+
+						if(response.pokemon != null){
+							response.pokemon = response.pokemon.split(";");
+						}
+						else{
+							response.pokemon = [];
+						}
 						res.json(response);
 					}
 				});

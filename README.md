@@ -59,7 +59,8 @@ Format Retour:
  	"idUser": String, 
  	"pseudo": String, 
  	"listPokemon": String, 
- 	"pokecoin": Int
+ 	"pokecoin": Int,
+ 	"profilePicture": String
  }
  - si Pseudo déjà pris: 
  {
@@ -82,7 +83,8 @@ Format Retour:
 	"idUser": Int,
 	"pseudo": String,
 	"listPokemon": String,
-	"pokecoin": Int
+	"pokecoin": Int,
+	"profilePicture": String
 }
 
 ## Pokemon:
@@ -103,5 +105,51 @@ Format Retour:
 
 ### GET /pokemon/:idPokemon
 Route pour récupérer les informations d'un pokemon et ses cartes.
+
+Format Retour:
+{
+	"id": Int,
+	"name": String",
+	"weight": Int,
+	"height": Int,
+	"urlPicture": Int,
+	"cards": [
+		{
+			"id": String,
+			"urlPicture": String
+		}
+	]
+}
+
+## OPTION
+
+### POST /option/editPseudo
+Route pour éditer le pseudo d'un compte.
+
+Format attendu: 
+{
+	"idUser": Int,
+	"pseudo": String
+}
+
+Format Retour: {}
+
+### POST /option/verifyPseudo
+Route pour vérifier si le pseudo existe déjà.
+
+Format attendu: 
+{
+	"pseudo": String
+}
+
+Format Retour:
+-s'il existe: 
+{
+	"pseudo": true
+}
+-s'il n'existe pas:
+{
+	"pseudo": false
+}
 
 

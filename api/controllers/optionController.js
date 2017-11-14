@@ -25,3 +25,17 @@ exports.editPseudo = function(req, res){
 		res.send();
 	})
 }
+
+exports.verifyPseudo = function(req, res){
+	console.log('/option/verifyPseudo');
+
+	var pseudo = req.body.pseudo;
+
+	connection.query("SELECT pseudo FROM User WHERE pseudo LIKE '" + pseudo + "'", function(error, results, fields){
+		if(results.length > 0){
+			res.json({"pseudo": true});
+		}else{
+			res.json({"pseudo": false});
+		}
+	})
+}
