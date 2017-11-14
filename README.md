@@ -1,6 +1,5 @@
 # PokeCardAPI
 
-
 faire un git clone 
 
 installer node js (https://nodejs.org/en)
@@ -87,6 +86,37 @@ Format Retour:
 	"profilePicture": String
 }
 
+## USER:
+
+### POST /user/addCard
+Route pour ajouter des cartes à un utilisateur.
+
+Format attendu: 
+{
+	"idUser": Int,
+	"cards": [
+		{
+			"id": String,
+			"idPokemon": String
+		}
+	]
+}
+
+Format Retour: 
+{
+	"idUser": Int,
+	"cards": [
+		{
+			"id": String
+		}
+	]
+	"pokemon": [
+		{
+			"id": String
+		}
+	]
+}
+
 ## Pokemon:
 
 ### GET /pokedex
@@ -152,4 +182,17 @@ Format Retour:
 	"pseudo": false
 }
 
+# BD
 
+CREATE TABLE `User` (
+  `idUser` int(255) unsigned NOT NULL AUTO_INCREMENT,
+  `pseudo` varchar(255) NOT NULL DEFAULT '',
+  `password` varchar(255) NOT NULL,
+  `pokemon` longtext,
+  `cards` longtext,
+  `pokecoin` int(11) DEFAULT '0',
+  `friends` varchar(255) DEFAULT '',
+  `profilePicture` longtext,
+  `idAccount` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`idUser`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
