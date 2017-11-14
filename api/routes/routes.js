@@ -12,10 +12,12 @@ module.exports = function(app) {
 
 	//USER
 	app.route('/user/addCard').post(userController.addCard);
+	app.route('/user/:idUser/pokedex').get(userController.userPokedex);
 
 	//POKEMON
 	app.route('/pokedex').get(pokemonController.pokedex);
 	app.route('/pokemon/:idPokemon').get(pokemonController.pokemonDetails);
+	app.route('/pokemon/booster').get(pokemonController.booster);
 
 	//CARTES
 

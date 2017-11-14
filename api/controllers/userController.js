@@ -9,6 +9,56 @@ var connection = mysql.createConnection({
 	database: 'pokecard'
 });
 
+exports.userPokedex = function(req, res){
+	var idUser = req.params.idUser;
+
+	console.log('/user/'+idUser+'/pokedex');
+
+	var options = "https://pokeapi.co/api/v2/pokemon/?limit=802&name";
+
+	var data = "";
+
+	var request = https.get(options, (result) => {
+
+		result.on('data', (d) => {
+			data += d;
+		});
+
+		result.on('end', function() {
+			var tmpData = JSON.parse(data);
+
+			var finalResult = {"pokedex": []};
+
+			connection.query("SELECT pokemon FROM User WHERE idUser="+idUser, function(error, results, fields){
+				if(results.length > 0){
+					var userPokemon = results[0].pokemon;
+
+					if(userPokemon != null){
+						userPokemon = userPokemon.split(",");
+
+						userPokemon.forEach(function(pokemonId){
+							finalResult.pokedex.push({
+								"id": pokemonId,
+								"name": tmpData.results[pokemonId-1].name,
+								"urlPicture": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + pokemonId + ".png"
+							});
+						});
+					}
+					res.json(finalResult);
+				}
+			});
+			
+		});
+
+	});
+
+	request.on('error', (e) => {
+		console.error(e);
+	});
+
+	request.end();
+}
+
 exports.addCard = function(req, res){
 	console.log('/user/addCard');
 

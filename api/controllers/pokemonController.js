@@ -99,3 +99,7 @@ exports.pokemonDetails = function(req, res){
 
 	request.end();
 }
+
+exports.booster = function(req, res){
+	
+}
