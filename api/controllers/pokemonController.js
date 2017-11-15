@@ -5,7 +5,7 @@ exports.pokedex = function(req, res) {
 
 	console.log("/pokedex")
 
-	var options = "https://pokeapi.co/api/v2/pokemon/?limit=802&name";
+	var options = "https://pokeapi.co/api/v2/pokemon/?limit=802";
 
 	var data = "";
 
