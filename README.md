@@ -146,7 +146,8 @@ Format Retour:
 	"cards": [
 		{
 			"id": String,
-			"urlPicture": String
+			"urlPicture": String,
+			"price": Int
 		}
 	]
 }

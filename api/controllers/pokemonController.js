@@ -20,10 +20,10 @@ exports.pokedex = function(req, res) {
 		result.on('end', function() {
 			var tmpData = JSON.parse(data);
 
-			var finalResult = {"pokedex": []};
+			var finalResult = [];
 
 			for(var i=1; i<=802; i++){
-				finalResult.pokedex.push({
+				finalResult.push({
 					"id": i,
 					"name": tmpData.results[i-1].name,
 					"urlPicture": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + i + ".png"
