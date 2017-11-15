@@ -28,7 +28,7 @@ exports.userPokedex = function(req, res){
 		result.on('end', function() {
 			var tmpData = JSON.parse(data);
 
-			var finalResult = {"pokedex": []};
+			var finalResult = [];
 
 			connection.query("SELECT pokemon FROM User WHERE idUser="+idUser, function(error, results, fields){
 				if(results.length > 0){
@@ -39,7 +39,7 @@ exports.userPokedex = function(req, res){
 
 						userPokemon.forEach(function(pokemonId){
 							if(pokemonId != ""){
-								finalResult.pokedex.push({
+								finalResult.push({
 									"id": _.parseInt(pokemonId),
 									"name": tmpData.results[pokemonId-1].name,
 									"urlPicture": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + pokemonId + ".png"
