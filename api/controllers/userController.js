@@ -1,6 +1,7 @@
 'use strict';
 var https = require('https');
 var mysql = require('mysql');
+var _ = require('lodash');
 
 var connection = mysql.createConnection({
 	host: 'localhost',
@@ -33,17 +34,21 @@ exports.userPokedex = function(req, res){
 				if(results.length > 0){
 					var userPokemon = results[0].pokemon;
 
-					if(userPokemon != null){
+					if(userPokemon != "" && userPokemon != null){
 						userPokemon = userPokemon.split(",");
 
 						userPokemon.forEach(function(pokemonId){
-							finalResult.pokedex.push({
-								"id": pokemonId,
-								"name": tmpData.results[pokemonId-1].name,
-								"urlPicture": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + pokemonId + ".png"
-							});
+							if(pokemonId != ""){
+								finalResult.pokedex.push({
+									"id": _.parseInt(pokemonId),
+									"name": tmpData.results[pokemonId-1].name,
+									"urlPicture": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + pokemonId + ".png"
+								});
+							}
 						});
+						finalResult.pokedex = _.sortBy(finalResult.pokedex, ['id']);
 					}
+					
 					res.json(finalResult);
 				}
 			});
