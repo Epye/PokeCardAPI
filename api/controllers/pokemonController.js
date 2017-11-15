@@ -84,7 +84,8 @@ exports.pokemonDetails = function(req, res){
 					tmpCard.cards.forEach(function(card){
 						resultData.cards.push({
 							"id": card.id,
-							"urlPicture": card.imageUrl
+							"urlPicture": card.imageUrl,
+							"price": price(card.rarity)
 						})
 					});
 					res.json(resultData);
@@ -190,4 +191,24 @@ exports.booster = function(req, res){
 	});
 
 	requestCards.end();
+}
+
+var price = function(rarity){
+	if(rarity == "Common"){
+		return 100;
+	}else if (rarity == "Uncommon"){
+		return 150;
+	}else if (rarity == "Rare"){
+		return 200;
+	}else if (rarity == "Rare Holo"){
+		return 250;
+	}else if (rarity == "Rare Ultra"){
+		return 300;
+	}else if (rarity == "Rare Holo EX"){
+		return 500;
+	}else if (rarity == "Rare Holo Lv.X"){
+		return 500;
+	}else{
+		return 400;
+	}
 }

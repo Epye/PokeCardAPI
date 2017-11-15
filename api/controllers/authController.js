@@ -1,5 +1,6 @@
 'use strict';
 var https = require('https');
+var http = require('http');
 var mysql = require('mysql');
 var bcrypt = require('bcrypt-nodejs');
 const saltRounds = 10;
@@ -61,11 +62,9 @@ exports.signup = function(req, res) {
 		if(results.length == 0) {
 			connection.query('INSERT INTO User (pseudo, password, profilePicture) VALUES ("' + pseudo + '", "' + password + '", "https://eternia.fr/public/media/sl/sprites/formes/025_kanto.png")', function(error, results, fiels) {
 				connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
-					if(results) {
+					if(results.length > 0) {
 						var response = results[0];
 						delete response.password;
-						response.cards = [];
-						response.pokemon = [];
 						res.json(response);
 					}
 				});
@@ -113,4 +112,8 @@ exports.verify = function(req, res){
 			});
 		};
 	});
+}
+
+var booster = function(idUser){
+	
 }
