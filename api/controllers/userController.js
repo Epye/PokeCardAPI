@@ -112,30 +112,17 @@ exports.addCard = function(req, res){
 
 exports.getCardsPokemonUser = function(req, res){
 	var idUser = req.params.idUser;
-	console.log("/user/" + idUser + "/pokemon/cards");
+	var idPokemon = req.params.idPokemon;
+	console.log("/user/" + idUser + "/" + idPokemon + "/cards");
 
-	connection.query("SELECT pokemon, cards FROM User WHERE idUser="+idUser, function(error, results, fields){
+	connection.query("SELECT cards FROM User WHERE idUser="+idUser, function(error, results, fields){
 		if(results.length > 0){
-			var listPokemon = results[0].pokemon;
 			var listCards = results[0].cards;
-			listPokemon = listPokemon.split(",");
-			listPokemon = _.sortBy(listPokemon, function(o){ return parseInt(o);});
 			listCards = listCards.split(",");
 
 			var finalResult = [];
 
-			listPokemon.forEach(function(pokemon){
-				finalResult.push({
-					"idPokemon": pokemon,
-					"cards": []
-				})
-			});
-
-			var options = "https://api.pokemontcg.io/v1/cards?id=";
-
-			listCards.forEach(function(card){
-				options += card + "|";
-			});
+			var options = "https://api.pokemontcg.io/v1/cards?nationalPokedexNumber=" + idPokemon;
 
 			var data = "";
 
@@ -149,11 +136,13 @@ exports.getCardsPokemonUser = function(req, res){
 					var tmpData = JSON.parse(data);
 
 					tmpData.cards.forEach(function(card){
-						console.log(finalResult)
-						finalResult[_.findIndex(finalResult, function(o) {return o.idPokemon == card.nationalPokedexNumber})].cards.push({
-							"id": card.id,
-							"urlPicture": card.imageUrl
-						});
+						if(listCards.includes(card.id)){
+							finalResult.push({
+								"id": card.id,
+								"urlPicture": card.imageUrl,
+								"price": 0
+							});
+						};
 					});
 
 					res.json(finalResult);
@@ -168,6 +157,12 @@ exports.getCardsPokemonUser = function(req, res){
 
 		}
 	})
+}
+
+exports.addFriend = function(req, res){
+	console.log("/user/addFriend");
+	var idFriend = req.body.idFriend;
+
 }
 
 
