@@ -2,7 +2,7 @@
 module.exports = function(app) {
 	var pokemonController = require('../controllers/pokemonController');
 	var cardsController = require('../controllers/cardsController');
-	var announceController = require('../controllers/announceController');
+	var exchangeController = require('../controllers/exchangeController');
 	var authController = require('../controllers/authController');
 	var optionController = require('../controllers/optionController');
 	var userController = require('../controllers/userController');
@@ -15,6 +15,8 @@ module.exports = function(app) {
 	//USER
 	app.route('/user/addCard').post(userController.addCard);
 	app.route('/user/:idUser/pokedex').get(userController.userPokedex);
+	app.route('/user/:idUser/:idPokemon/cards').get(userController.getCardsPokemonUser);
+	app.route('/user/addFriend').post(userController.addFriend);
 
 	//POKEMON
 	app.route('/pokedex').get(pokemonController.pokedex);
@@ -22,9 +24,12 @@ module.exports = function(app) {
 
 	//CARTES
 	app.route('/cards/:idUser/booster').get(cardsController.booster);
+	app.route('/cards/:idPokemon').get(cardsController.cardsPokemon);
 
-	//ANNONCES
-	app.route('/announce/add').post(announceController.addAnnounce);
+	//EXCHANGES
+	app.route('/exchange/send').post(exchangeController.send);
+	app.route('/exchange/add').post(exchangeController.add);
+	app.route('/exchange/:idEchange').delete(exchangeController.remove);
 
 	//QUIZZ
 

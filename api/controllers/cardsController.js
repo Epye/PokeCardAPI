@@ -95,3 +95,38 @@ exports.booster = function(req, res){
 
 	requestCards.end();
 }
+
+exports.cardsPokemon = function(req, res){
+	var idPokemon = req.params.idPokemon;
+	console.log("/cards/"+idPokemon);
+
+	var options = "https://api.pokemontcg.io/v1/cards?nationalPokedexNumber="+idPokemon;
+	
+	var data = "";
+
+	var requestCards = https.get(options, (resultsCards) => {
+
+		resultsCards.on('data', (d) => {
+			data += d;
+		});
+
+		resultsCards.on('end', function() {
+			var tmpCard = JSON.parse(data);
+			var result = [];
+			tmpCard.cards.forEach(function(card){
+				result.push({
+					"id": card.id,
+					"idPokemon": card.nationalPokedexNumber,
+					"urlPicture": card.imageUrl
+				});
+			});
+			res.json(result);
+		});
+	});
+
+	requestCards.on('error', (e) => {
+		console.error(e);
+	});
+
+	requestCards.end();
+}

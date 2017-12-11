@@ -37,6 +37,8 @@ exports.userPokedex = function(req, res){
 					if(userPokemon != "" && userPokemon != null){
 						userPokemon = userPokemon.split(",");
 
+						userPokemon = _.sortBy(userPokemon, function(o){ return parseInt(o);});
+
 						userPokemon.forEach(function(pokemonId){
 							if(pokemonId != ""){
 								finalResult.push({
@@ -46,7 +48,6 @@ exports.userPokedex = function(req, res){
 								});
 							}
 						});
-						finalResult.pokedex = _.sortBy(finalResult.pokedex, ['id']);
 					}
 					
 					res.json(finalResult);
@@ -108,6 +109,63 @@ exports.addCard = function(req, res){
 		}
 	});
 }
+
+exports.getCardsPokemonUser = function(req, res){
+	var idUser = req.params.idUser;
+	var idPokemon = req.params.idPokemon;
+	console.log("/user/" + idUser + "/" + idPokemon + "/cards");
+
+	connection.query("SELECT cards FROM User WHERE idUser="+idUser, function(error, results, fields){
+		if(results.length > 0){
+			var listCards = results[0].cards;
+			listCards = listCards.split(",");
+
+			var finalResult = [];
+
+			var options = "https://api.pokemontcg.io/v1/cards?nationalPokedexNumber=" + idPokemon;
+
+			var data = "";
+
+			var request = https.get(options, (result) => {
+
+				result.on('data', (d) => {
+					data += d;
+				});
+
+				result.on('end', function() {
+					var tmpData = JSON.parse(data);
+
+					tmpData.cards.forEach(function(card){
+						if(listCards.includes(card.id)){
+							finalResult.push({
+								"id": card.id,
+								"urlPicture": card.imageUrl,
+								"price": 0
+							});
+						};
+					});
+
+					res.json(finalResult);
+				});
+			});
+
+			request.on('error', (e) => {
+				console.error(e);
+			});
+
+			request.end();
+
+		}
+	})
+}
+
+exports.addFriend = function(req, res){
+	console.log("/user/addFriend");
+	var idFriend = req.body.idFriend;
+
+}
+
+
 
 function compareCard(element){
 	return element == this.id;

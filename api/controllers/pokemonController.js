@@ -127,3 +127,4 @@ var price = function(rarity){
 		return 400;
 	}
 }
+
