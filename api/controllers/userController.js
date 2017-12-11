@@ -160,9 +160,30 @@ exports.getCardsPokemonUser = function(req, res){
 }
 
 exports.addFriend = function(req, res){
-	console.log("/user/addFriend");
+	var idUser = req.params.idUser;
+	console.log("/user/" + idUser + "/addFriend");
 	var idFriend = req.body.idFriend;
 
+	connection.query("SELECT friends FROM User WHERE idUser="+idUser, function(error, results, fields){
+		if(results.length > 0){
+			var userFriends = results[0].friends;
+
+			connection.query("SELECT friends FROM User WHERE idUser="+idFriend, function(error, results, fields){
+				if(results.length > 0){
+					var friend = results[0].friends;
+					if(userFriends.length == 0){
+						userFriends = idFriend;
+					}else{
+						userFriends += "," + idFriend;
+					}
+				}else{
+					res.json({"idFriend": false})
+				}
+			})
+		}else{
+			res.json({"idUser": false});
+		}
+	})
 }
 
 

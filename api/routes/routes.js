@@ -16,7 +16,7 @@ module.exports = function(app) {
 	app.route('/user/addCard').post(userController.addCard);
 	app.route('/user/:idUser/pokedex').get(userController.userPokedex);
 	app.route('/user/:idUser/:idPokemon/cards').get(userController.getCardsPokemonUser);
-	app.route('/user/addFriend').post(userController.addFriend);
+	app.route('/user/:idUser/addFriend').post(userController.addFriend);
 
 	//POKEMON
 	app.route('/pokedex').get(pokemonController.pokedex);
