@@ -50,6 +50,8 @@ exports.userPokedex = function(req, res){
 					}
 					
 					res.json(finalResult);
+				}else{
+					res.json({user: false});
 				}
 			});
 			

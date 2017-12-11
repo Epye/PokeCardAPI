@@ -27,21 +27,21 @@ Format attendu:
 }
 
 Format Retour: 
- - si OK: 
- {
- 	"idUser": String, 
- 	"pseudo": String, 
- 	"listPokemon": String, 
- 	"pokecoin": Int
- }
- - si Pseudo introuvable: 
- {
- 	pseudo: False
- }
- - si mauvais password: 
- {
- 	password: False
- }
+- si OK: 
+{
+	"idUser": String, 
+	"pseudo": String, 
+	"listPokemon": String, 
+	"pokecoin": Int
+}
+- si Pseudo introuvable: 
+{
+	pseudo: False
+}
+- si mauvais password: 
+{
+	password: False
+}
 
 ### POST /signup:
 Route pour créer un compte.
@@ -53,21 +53,21 @@ Format attendu:
 }
 
 Format Retour: 
- - si Ok: 
- {
- 	"idUser": String, 
- 	"pseudo": String, 
- 	"listPokemon": String, 
- 	"pokecoin": Int,
- 	"profilePicture": String
- }
- - si Pseudo déjà pris: 
- {
- 	"pseudo": false
- }
+- si Ok: 
+{
+	"idUser": String, 
+	"pseudo": String, 
+	"listPokemon": String, 
+	"pokecoin": Int,
+	"profilePicture": String
+}
+- si Pseudo déjà pris: 
+{
+	"pseudo": false
+}
 
 ### POST /verify:
-Route pour se connecter via Google ou Facebook.
+Route pour se connecter via Google ou Facebook.url
 
 Format attendu: 
 {
@@ -95,10 +95,10 @@ Format attendu:
 {
 	"idUser": Int,
 	"cards": [
-		{
-			"id": String,
-			"idPokemon": String
-		}
+	{
+		"id": String,
+		"idPokemon": String
+	}
 	]
 }
 
@@ -106,32 +106,46 @@ Format Retour:
 {
 	"idUser": Int,
 	"cards": [
-		{
-			"id": String
-		}
+	{
+		"id": String
+	}
 	]
 	"pokemon": [
-		{
-			"id": String
-		}
+	{
+		"id": String
+	}
 	]
 }
 
-## Pokemon:
+### GET /user/:idUser/pokedex
+Route pour récupérer la liste des pokemon d'un utilisateur
 
+Format Retour si user existe:
+[
+{
+	"id": Int,
+	"name": String,
+	"urlPicture": String
+}
+]
+
+Format Retour si user n'exise pas:
+{
+	"user": false
+}
+
+## Pokemon:
 ### GET /pokedex
 Route pour récupérer le pokedex.
 
 Format Retour: 
-{ 
-	"pokedex": [
-		{
-			"id": Int,
-			"name": String,
-			"urlPicture": String
-		}
-	]
+[
+{
+	"id": Int,
+	"name": String,
+	"urlPicture": String
 }
+]
 
 ### GET /pokemon/:idPokemon
 Route pour récupérer les informations d'un pokemon et ses cartes.
@@ -144,11 +158,29 @@ Format Retour:
 	"height": Int,
 	"urlPicture": Int,
 	"cards": [
-		{
-			"id": String,
-			"urlPicture": String,
-			"price": Int
-		}
+	{
+		"id": String,
+		"urlPicture": String,
+		"price": Int
+	}
+	]
+}
+
+### GET /pokemon/:idUser/booster
+Route pour ouvrir un booster de 10 cartes
+
+Format Retour:
+{
+	"idUser": Int,
+	"cards": [
+	{
+		"id": String
+	}
+	]
+	"pokemon": [
+	{
+		"id": String
+	}
 	]
 }
 
@@ -186,14 +218,14 @@ Format Retour:
 # BD
 
 CREATE TABLE `User` (
-  `idUser` int(255) unsigned NOT NULL AUTO_INCREMENT,
-  `pseudo` varchar(255) NOT NULL DEFAULT '',
-  `password` varchar(255) NOT NULL,
-  `pokemon` longtext,
-  `cards` longtext,
-  `pokecoin` int(11) DEFAULT '0',
-  `friends` varchar(255) DEFAULT '',
-  `profilePicture` longtext,
-  `idAccount` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`idUser`)
+`idUser` int(255) unsigned NOT NULL AUTO_INCREMENT,
+`pseudo` varchar(255) NOT NULL DEFAULT '',
+`password` varchar(255) NOT NULL,
+`pokemon` longtext,
+`cards` longtext,
+`pokecoin` int(11) DEFAULT '0',
+`friends` varchar(255) DEFAULT '',
+`profilePicture` longtext,
+`idAccount` varchar(255) DEFAULT NULL,
+PRIMARY KEY (`idUser`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
