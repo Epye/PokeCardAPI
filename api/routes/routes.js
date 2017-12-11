@@ -15,6 +15,7 @@ module.exports = function(app) {
 	//USER
 	app.route('/user/addCard').post(userController.addCard);
 	app.route('/user/:idUser/pokedex').get(userController.userPokedex);
+	app.route('/user/:idUser/pokemon/cards').get(userController.getCardsPokemonUser);
 
 	//POKEMON
 	app.route('/pokedex').get(pokemonController.pokedex);
@@ -22,6 +23,7 @@ module.exports = function(app) {
 
 	//CARTES
 	app.route('/cards/:idUser/booster').get(cardsController.booster);
+	app.route('/cards/:idPokemon').get(cardsController.cardsPokemon);
 
 	//ANNONCES
 	app.route('/announce/add').post(announceController.addAnnounce);

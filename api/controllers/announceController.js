@@ -17,7 +17,17 @@ exports.addAnnounce = function(req, res){
 	var idCardProposed = req.body.idCardProposed;
 	var idCardsWanted = req.body.idCardsWanted;
 
-	connection.query("INSERT INTO Announce (idUser, idCardProposed, idCardsWanted) VALUES (" + idUser + ", " + idCardProposed + ", \"" + idCardsWanted.toString() + "\")", function(error, results, fields){
-		res.json("OK");
-	})
+	if(idUser !== undefined && idCardProposed !== undefined){
+		connection.query("INSERT INTO Announce (idUser, idCardProposed, idCardsWanted) VALUES (" + idUser + ", " + idCardProposed + ", \"" + idCardsWanted.toString() + "\")", function(error, results, fields){});
+	}else{
+		res.sendStatus(500);
+	}
+
+	res.end();
+}
+
+exports.exchange = function(req, res){
+	var idAnnounce = req.params.idAnnounce;
+	console.log("/announce/" + idAnnounce + "/exchange");
+
 }
