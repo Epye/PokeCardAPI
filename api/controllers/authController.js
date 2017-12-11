@@ -112,8 +112,4 @@ exports.verify = function(req, res){
 			});
 		};
 	});
-}
-
-var booster = function(idUser){
-	
-}
+} 

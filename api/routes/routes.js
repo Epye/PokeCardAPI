@@ -1,6 +1,8 @@
 'use strict';
 module.exports = function(app) {
 	var pokemonController = require('../controllers/pokemonController');
+	var cardsController = require('../controllers/cardsController');
+	var announceController = require('../controllers/announceController');
 	var authController = require('../controllers/authController');
 	var optionController = require('../controllers/optionController');
 	var userController = require('../controllers/userController');
@@ -17,9 +19,12 @@ module.exports = function(app) {
 	//POKEMON
 	app.route('/pokedex').get(pokemonController.pokedex);
 	app.route('/pokemon/:idPokemon').get(pokemonController.pokemonDetails);
-	app.route('/:idUser/booster').get(pokemonController.booster);
 
 	//CARTES
+	app.route('/cards/:idUser/booster').get(cardsController.booster);
+
+	//ANNONCES
+	app.route('/announce/add').post(announceController.addAnnounce);
 
 	//QUIZZ
 
