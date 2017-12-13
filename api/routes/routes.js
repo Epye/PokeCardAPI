@@ -6,6 +6,7 @@ module.exports = function(app) {
 	var authController = require('../controllers/authController');
 	var optionController = require('../controllers/optionController');
 	var userController = require('../controllers/userController');
+	var testManager = require('../manager/requestManager');
 
 	//AUTHENTIFICATION
 	app.route('/login').post(authController.login);
@@ -14,6 +15,7 @@ module.exports = function(app) {
 
 	//USER
 	app.route('/user/addCard').post(userController.addCard);
+	app.route('/user/removeCard').delete(userController.removeCard);
 	app.route('/user/:idUser/pokedex').get(userController.userPokedex);
 	app.route('/user/:idUser/:idPokemon/cards').get(userController.getCardsPokemonUser);
 	app.route('/user/:idUser/addFriend').post(userController.addFriend);

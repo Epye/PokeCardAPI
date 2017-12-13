@@ -27,18 +27,18 @@ exports.login = function(req, res) {
 			if(bcrypt.compareSync(password, results[0].password)) {
 				var response = results[0];
 				delete response.password;
-				if(response.cards != null){
-					response.cards = response.cards.split(",");
+				if(response.listeCards != null){
+					response.listeCards = response.listeCards.split(",");
 				}
 				else{
-					response.cards = [];
+					response.listeCards = [];
 				}
 
-				if(response.pokemon != null){
-					response.pokemon = response.pokemon.split(",");
+				if(response.listePokemon != null){
+					response.listePokemon = response.listePokemon.split(",");
 				}
 				else{
-					response.pokemon = [];
+					response.listePokemon = [];
 				}
 				res.json(response);
 			} else {
@@ -60,7 +60,7 @@ exports.signup = function(req, res) {
 	var response = {};
 	connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 		if(results.length == 0) {
-			connection.query('INSERT INTO User (pseudo, password, profilePicture) VALUES ("' + pseudo + '", "' + password + '", "https://eternia.fr/public/media/sl/sprites/formes/025_kanto.png")', function(error, results, fiels) {
+			connection.query('INSERT INTO User (pseudo, password, picture) VALUES ("' + pseudo + '", "' + password + '", "https://eternia.fr/public/media/sl/sprites/formes/025_kanto.png")', function(error, results, fiels) {
 				connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 					if(results.length > 0) {
 						var response = results[0];
@@ -80,31 +80,44 @@ exports.verify = function(req, res){
 	var idAccount = req.body.idUser;
 	var pseudo = req.body.pseudo;
 	var password = req.body.password;
-	var profilePicture = req.body.profilePicture;
+	var picture = req.body.picture;
 
 	connection.query('SELECT * FROM User WHERE idAccount LIKE "' + idAccount + '"', function(error, results, fields) {
 		if(results.length > 0) {
 			var response = results[0];
 			delete response.password;
+			if(response.listeCards != null){
+				response.listeCards = response.listeCards.split(",");
+			}
+			else{
+				response.listeCards = [];
+			}
+
+			if(response.listePokemon != null){
+				response.listePokemon = response.listePokemon.split(",");
+			}
+			else{
+				response.listePokemon = [];
+			}
 			res.json(response);
 		} else {
-			connection.query('INSERT INTO User (idAccount, pseudo, password, profilePicture) VALUES ("' + idAccount + '", "' + pseudo + '", "' + password + '", "' + profilePicture + '")', function(error, results, fiels) {
+			connection.query('INSERT INTO User (idAccount, pseudo, password, picture) VALUES ("' + idAccount + '", "' + pseudo + '", "' + password + '", "' + picture + '")', function(error, results, fiels) {
 				connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 					if(results.length > 0) {
 						var response = results[0];
 						delete response.password;
-						if(response.cards != null){
-							response.cards = response.cards.split(",");
+						if(response.listeCards != null){
+							response.listeCards = response.listeCards.split(",");
 						}
 						else{
-							response.cards = [];
+							response.listeCards = [];
 						}
 
-						if(response.pokemon != null){
-							response.pokemon = response.pokemon.split(",");
+						if(response.listePokemon != null){
+							response.listePokemon = response.listePokemon.split(",");
 						}
 						else{
-							response.pokemon = [];
+							response.listePokemon = [];
 						}
 						res.json(response);
 					}
