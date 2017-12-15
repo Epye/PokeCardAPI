@@ -30,12 +30,8 @@ var HTTP = function(url, path, method, body){
 		});
 
 		request.write(JSON.stringify(body));
-		request.on('error', (e) => {console.error(e);});
+		request.on('error', (e) => {console.error(e); reject();});
 		request.end();
-	})
-	.catch(function(error){
-		console.log(error);
-		return Promise.reject();
 	})
 }
 
@@ -52,12 +48,8 @@ var HTTPS = function(url, path, method, body){
 				resolve(JSON.parse(data));
 			});
 		});
-		request.on('error', (e) => {console.error(e);});
+		request.on('error', (e) => {console.error(e); reject();});
 		request.end();
-	})
-	.catch(function(error){
-		console.log(error);
-		return Promise.reject();
 	})
 }
 

@@ -41,16 +41,14 @@ exports.userPokedex = function(req, res){
 						}
 					});
 				}
-
 				res.json(finalResult);
 			}else{
-				res.json({user: false});
+				res.sendStatus(400);
 			}
 		})
 	})
 	.catch(function(error){
-		console.log(error);
-		res.end();
+		res.sendStatus(500);
 	})
 }
 
@@ -62,16 +60,8 @@ exports.addCard = function(req, res){
 
 	connection.query("SELECT * FROM User WHERE idUser="+idUser, function(error, results, fields){
 		if(results.length > 0){
-			var userCards = results[0].listeCards;
-			var userPokemon = results[0].listePokemon;
-
-			if(userPokemon != null){
-				userCards = userCards.split(",");
-				userPokemon = userPokemon.split(",");
-			}else{
-				userCards = [];
-				userPokemon = [];
-			}
+			var userCards = formatArray(results[0].listeCards);
+			var userPokemon = formatArray(results[0].listePokemon);
 
 			cards.forEach(function(card){
 				userCards.push(card.id);
@@ -93,14 +83,14 @@ exports.addCard = function(req, res){
 			connection.query("UPDATE User SET listePokemon='" + userPokemon + "', listeCards='" + userCards + "' WHERE idUser="+idUser, function(error, results, fields){
 				connection.query("SELECT * FROM User WHERE idUser=" + idUser, function(error, results, fields){
 					if(results.length > 0){
-						res.json(results[0]);
+						res.json(formatResponse(results[0]));
 					}else{
-						res.json({"idUser": false});
+						res.sendStatus(400);
 					}
 				});
 			});
 		}else{
-			res.json({"idUser": false});
+			res.sendStatus(400)
 		}
 	});
 }
@@ -128,7 +118,7 @@ exports.removeCard = function(req, res){
 
 					return request.HTTPS(url, path, "GET");
 				}else{
-					res.json({"ERREUR": "Card not found"});
+					res.sendStatus(400);
 				}
 			})
 			.then(function(response){
@@ -137,7 +127,6 @@ exports.removeCard = function(req, res){
 				response.cards.forEach(function(card){
 					cards.push(card.id);
 				})
-
 
 				userCards = userCards.replace(idCard, "").replace(",,", ",");
 
@@ -162,10 +151,7 @@ exports.removeCard = function(req, res){
 				connection.query("UPDATE User SET listePokemon='" + userPokemon + "', listeCards='" + userCards + "' WHERE idUser="+idUser, function(error, results, fields){
 					connection.query("SELECT * FROM User WHERE idUser=" + idUser, function(error, results, fields){
 						if(results.length > 0){
-							delete results[0].password;
-							results[0].listePokemon = results[0].listePokemon.split(",");
-							results[0].listeCards = results[0].listeCards.split(",");
-							res.json(results[0]);
+							res.json(formatResponse(results[0]));
 						}
 					});
 				});
@@ -212,34 +198,39 @@ exports.getCardsPokemonUser = function(req, res){
 exports.addFriend = function(req, res){
 	var idUser = req.params.idUser;
 	console.log("/user/" + idUser + "/addFriend");
-	var idFriend = req.body.idFriend;
+	var pseudoFriend = req.body.pseudoFriend;
 
 	connection.query("SELECT friends FROM User WHERE idUser="+idUser, function(error, results, fields){
 		if(results.length > 0){
 			var userFriends = results[0].friends;
 
-			connection.query("SELECT friends FROM User WHERE idUser="+idFriend, function(error, results, fields){
+			connection.query("SELECT friends FROM User WHERE pseudo LIKE \""+pseudoFriend+"\"", function(error, results, fields){
 				if(results.length > 0){
+					var idFriend = results[0].idUser;
 					var friends = results[0].friends;
-					if(userFriends.length == 0){
-						userFriends = idFriend;
+					if(userFriends.includes(idFriend)){
+						res.sendStatus(400);
 					}else{
-						userFriends += "," + idFriend;
+						if(userFriends.length == 0){
+							userFriends = idFriend;
+						}else{
+							userFriends += "," + idFriend;
+						}
+						if(friends.length > 0){
+							friends = idUser;
+						}else{
+							friends += "," + idUser;
+						}
+						connection.query("UPDATE User SET friends=\""+userFriends+"\" WHERE idUser="+idUser, function(){});
+						connection.query("UPDATE User SET friends=\""+friends+"\" WHERE idUser="+idFriend, function(){});
+						res.sendStatus(200);
 					}
-					if(friends.length > 0){
-						friends = idUser;
-					}else{
-						friends += "," + idUser;
-					}
-
-					connection.query("UPDATE User SET friends=\""+userFriends+"\" WHERE idUser="+idUser, function(){});
-					connection.query("UPDATE User SET friends=\""+friends+"\" WHERE idUser="+idFriend, function(){});
 				}else{
-					res.json({"idFriend": false})
+					res.sendStatus(400);
 				}
 			})
 		}else{
-			res.json({"idUser": false});
+			res.sendStatus(400);
 		}
 	})
 }
