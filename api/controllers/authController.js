@@ -1,10 +1,8 @@
 'use strict';
-var https = require('https');
-var http = require('http');
 var mysql = require('mysql');
 var bcrypt = require('bcrypt-nodejs');
 const saltRounds = 10;
-
+var request = require("../manager/requestManager");
 
 var connection = mysql.createConnection({
 	host: 'localhost',
@@ -25,27 +23,12 @@ exports.login = function(req, res) {
 	connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 		if(results.length > 0) {
 			if(bcrypt.compareSync(password, results[0].password)) {
-				var response = results[0];
-				delete response.password;
-				if(response.cards != null){
-					response.cards = response.cards.split(",");
-				}
-				else{
-					response.cards = [];
-				}
-
-				if(response.pokemon != null){
-					response.pokemon = response.pokemon.split(",");
-				}
-				else{
-					response.pokemon = [];
-				}
-				res.json(response);
+				res.json(formatResponse(results[0]));
 			} else {
-				res.json({ "pseudo": true, "password": false });
+				res.sendStatus(400)
 			}
 		} else {
-			res.json({ "pseudo": false , "password": false});
+			res.sendStatus(400)
 		}
 	});
 }
@@ -60,17 +43,15 @@ exports.signup = function(req, res) {
 	var response = {};
 	connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 		if(results.length == 0) {
-			connection.query('INSERT INTO User (pseudo, password, profilePicture) VALUES ("' + pseudo + '", "' + password + '", "https://eternia.fr/public/media/sl/sprites/formes/025_kanto.png")', function(error, results, fiels) {
+			connection.query('INSERT INTO User (pseudo, password, picture) VALUES ("' + pseudo + '", "' + password + '", "https://eternia.fr/public/media/sl/sprites/formes/025_kanto.png")', function(error, results, fiels) {
 				connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 					if(results.length > 0) {
-						var response = results[0];
-						delete response.password;
-						res.json(response);
+						res.json(formatResponse(results[0]));
 					}
 				});
 			});
 		}else{
-			res.json({"pseudo": false});
+			res.sendStatus(400)
 		}
 	});
 }
@@ -80,33 +61,24 @@ exports.verify = function(req, res){
 	var idAccount = req.body.idUser;
 	var pseudo = req.body.pseudo;
 	var password = req.body.password;
-	var profilePicture = req.body.profilePicture;
+	var picture = req.body.picture;
 
 	connection.query('SELECT * FROM User WHERE idAccount LIKE "' + idAccount + '"', function(error, results, fields) {
 		if(results.length > 0) {
-			var response = results[0];
-			delete response.password;
-			res.json(response);
+			res.json(formatResponse(results[0]));
 		} else {
-			connection.query('INSERT INTO User (idAccount, pseudo, password, profilePicture) VALUES ("' + idAccount + '", "' + pseudo + '", "' + password + '", "' + profilePicture + '")', function(error, results, fiels) {
+			connection.query('INSERT INTO User (idAccount, pseudo, password, picture) VALUES ("' + idAccount + '", "' + pseudo + '", "' + password + '", "' + picture + '")', function(error, results, fiels) {
 				connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 					if(results.length > 0) {
-						var response = results[0];
-						delete response.password;
-						if(response.cards != null){
-							response.cards = response.cards.split(",");
-						}
-						else{
-							response.cards = [];
-						}
-
-						if(response.pokemon != null){
-							response.pokemon = response.pokemon.split(",");
-						}
-						else{
-							response.pokemon = [];
-						}
-						res.json(response);
+						var url = "127.0.0.1";
+						var path = "/cards/"+results[0].idUser+"/booster";
+						request.HTTP(url, path, "GET")
+						.then(function(response){
+							res.json(response);
+						})
+						.catch(function(error){
+							res.json(formatResponse(results[0]));
+						})
 					}
 				});
 			});

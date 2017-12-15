@@ -1,8 +1,7 @@
 'use strict';
-var https = require('https');
-var http = require('http');
 var mysql = require('mysql');
 var _ = require('lodash');
+var request = require("../manager/requestManager");
 
 var connection = mysql.createConnection({
 	host: 'localhost',
@@ -17,8 +16,9 @@ exports.add = function(req, res){
 	var idSender = req.body.idSender;
 	var idReceiver = req.body.idReceiver;
 	var idCard = req.body.idCard;
+	var status = req.body.status;
 
-	connection.query("INSERT INTO Exchange (idSender, idReceiver, idCard) VALUES (" + idSender + ", " + idReceiver + ", \"" + idCard + "\")", function(error, results, fields){
+	connection.query("INSERT INTO Exchange (idSender, idReceiver, idCard, status) VALUES (" + idSender + ", " + idReceiver + ", \"" + idCard + "\", \"" + status+  "\")", function(error, results, fields){
 		res.json({"OK": "OK"});
 	});
 }
@@ -48,59 +48,37 @@ exports.send = function(req, res){
 	var idReceiver = req.body.idReceiver;
 	var idCard = req.body.idCard;
 
-	connection.query("SELECT cards FROM User WHERE idUser=" + idSender, function(error, results, fields){
-		if(results.length > 0){
-			var cards = results[0].cards;
-			if(cards.includes(idCard)){
-				cards = cards.replace(idCard, "").replace(",,", ",");
-				connection.query("UPDATE User SET cards=\""+ cards + "\" WHERE idUser="+idSender, function(errors, result, field){
-					connection.query("SELECT cards FROM User WHERE idUser=" + idReceiver, function(error, results, fields){
-						if(results.length > 0){
-							var cards = results[0].cards;
-							if(cards.length == 0){
-								cards = idCard;
-							}else{
-								cards += "," + idCard;
-							}
-							connection.query("UPDATE User SET cards=\""+ cards + "\" WHERE idUser="+idReceiver, function(){
-								res.end();
+	var user = {};
 
-								var data = "";
+	var body = {
+		"idUser": idSender,
+		"idCard": idCard
+	}
 
-								var body = {
-									"idSender": idSender,
-									"idReceiver": idReceiver,
-									"idCard": idCard
-								}
+	var url = "127.0.0.1";
+	var path = "/user/removeCard";
 
-								var options = {
-									port: 3000,
-									hostname: '127.0.0.1',
-									method: 'POST',
-									path: '/exchange/add',
-									headers: {
-										'Content-Type': 'application/json',
-										'Content-Length': Buffer.byteLength(JSON.stringify(body))
-									}
-								};
-								var request = http.request(options, (results) => {});
+	request.HTTP(url, path, "DELETE", body)
+	.then(function(response){
+		user = response;
+		path = "/user/addCard";
 
-								request.write(JSON.stringify(body));
-
-								request.on('error', (e) => {
-									console.error(e);
-								});
-
-								request.end();
-							});
-						}
-					});
-
-				});
-			}else{
-				res.sendStatus(500);
-				res.end();
-			}
+		body = {
+			"idUser": idReceiver,
+			"cards": [idCard]
 		}
-	});
+		return request.HTTP(url, path, "POST", body);
+	})
+	.then(function(response){
+		res.json(user);
+
+		path = "/exchange/add";
+		body = {
+			"idSender": idSender,
+			"idReceiver": idReceiver,
+			"idCard": idCard,
+			"status": "send"
+		}
+		request.HTTP(url, path, "POST", body);
+	})
 }

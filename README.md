@@ -15,7 +15,7 @@ l'adresse est ensuite localhost:3000
 
 # Liste des routes de l'API : 
 
-## Authentification: 
+## AUTHENTIFICATION: 
 
 ### POST /login:
 Route pour se connecter avec un compte.
@@ -31,17 +31,14 @@ Format Retour:
 {
 	"idUser": String, 
 	"pseudo": String, 
-	"listPokemon": String, 
-	"pokecoin": Int
+	"listePokemon": ArrayList<String>, 
+	"listeCards": ArrayList<String>,
+	"frinds": ArrayList<String>,
+	"pokeCoin": Int,
+	"picture": String,
+	"idAccount": Int
 }
-- si Pseudo introuvable: 
-{
-	pseudo: False
-}
-- si mauvais password: 
-{
-	password: False
-}
+- si Erreur : code 400
 
 ### POST /signup:
 Route pour créer un compte.
@@ -57,14 +54,14 @@ Format Retour:
 {
 	"idUser": String, 
 	"pseudo": String, 
-	"listPokemon": String, 
-	"pokecoin": Int,
-	"profilePicture": String
+	"listePokemon": ArrayList<String>, 
+	"listeCards": ArrayList<String>,
+	"frinds": ArrayList<String>,
+	"pokeCoin": Int,
+	"picture": String,
+	"idAccount": Int
 }
-- si Pseudo déjà pris: 
-{
-	"pseudo": false
-}
+- si Pseudo déjà pris: code 400
 
 ### POST /verify:
 Route pour se connecter via Google ou Facebook.url
@@ -79,43 +76,17 @@ Format attendu:
 
 Format Retour:
 {
-	"idUser": Int,
-	"pseudo": String,
-	"listPokemon": String,
-	"pokecoin": Int,
-	"profilePicture": String
+	"idUser": String, 
+	"pseudo": String, 
+	"listePokemon": ArrayList<String>, 
+	"listeCards": ArrayList<String>,
+	"frinds": ArrayList<String>,
+	"pokeCoin": Int,
+	"picture": String,
+	"idAccount": Int
 }
 
 ## USER:
-
-### POST /user/addCard
-Route pour ajouter des cartes à un utilisateur.
-
-Format attendu: 
-{
-	"idUser": Int,
-	"cards": [
-	{
-		"id": String,
-		"idPokemon": String
-	}
-	]
-}
-
-Format Retour: 
-{
-	"idUser": Int,
-	"cards": [
-	{
-		"id": String
-	}
-	]
-	"pokemon": [
-	{
-		"id": String
-	}
-	]
-}
 
 ### GET /user/:idUser/pokedex
 Route pour récupérer la liste des pokemon d'un utilisateur
@@ -134,7 +105,70 @@ Format Retour si user n'exise pas:
 	"user": false
 }
 
-## Pokemon:
+### POST /user/addCard
+Route pour ajouter des cartes à un utilisateur.
+
+Format attendu: 
+{
+	"idUser": Int,
+	"cards": [
+	{
+		"id": String,
+		"idPokemon": String
+	}
+	]
+}
+
+Format Retour: 
+{
+	"idUser": String, 
+	"pseudo": String, 
+	"listePokemon": ArrayList<String>, 
+	"listeCards": ArrayList<String>,
+	"frinds": ArrayList<String>,
+	"pokeCoin": Int,
+	"picture": String,
+	"idAccount": Int
+}
+
+### POST /user/removeCard 
+Route pour supprimer des cartes à un utilisateur
+
+Format attendu:
+{
+	"idUser": Int,
+	"idCard": String
+}
+Format Retour: 
+{
+	"idUser": String, 
+	"pseudo": String, 
+	"listePokemon": ArrayList<String>, 
+	"listeCards": ArrayList<String>,
+	"frinds": ArrayList<String>,
+	"pokeCoin": Int,
+	"picture": String,
+	"idAccount": Int
+}
+
+### GET /user/:idUser/:idPokemon/cards
+Route pour récupérer les cartes de l'utilisateur d'un pokemon précis
+
+Format Retour:
+[{
+	"id": String,
+	"urlPictue": String,
+	"price": Int
+}]
+
+### POST /user/:idUser/addFriend
+
+Format attendu:
+{
+	"pseudoFriend": String
+}
+
+## POKEMON:
 ### GET /pokedex
 Route pour récupérer le pokedex.
 
@@ -166,26 +200,64 @@ Format Retour:
 	]
 }
 
-### GET /pokemon/:idUser/booster
+## CARDS :
+### GET /cards/:idUser/booster
 Route pour ouvrir un booster de 10 cartes
 
 Format Retour:
 {
-	"idUser": Int,
-	"cards": [
-	{
-		"id": String
-	}
-	]
-	"pokemon": [
-	{
-		"id": String
-	}
-	]
+	"idUser": String, 
+	"pseudo": String, 
+	"listePokemon": ArrayList<String>, 
+	"listeCards": ArrayList<String>,
+	"frinds": ArrayList<String>,
+	"pokeCoin": Int,
+	"picture": String,
+	"idAccount": Int
+}
+
+### GET /cards/:idPokemon
+Route pour récupérer toutes les cartes d'un pokémon
+
+Format Retour:
+{
+	"id": String,
+	"idPokemon": Int,
+	"urlPicture": String
+}
+
+## EXCHANGE
+### POST /exchange/send
+Route pour envoyer une carte à un autre utilisateur
+
+Format attendu:
+{
+	"idSender": Int,
+	"idReceiver": Int,
+	"idCard": String
+}
+
+Format Retour:
+{
+	"idUser": String, 
+	"pseudo": String, 
+	"listePokemon": ArrayList<String>, 
+	"listeCards": ArrayList<String>,
+	"frinds": ArrayList<String>,
+	"pokeCoin": Int,
+	"picture": String,
+	"idAccount": Int
+}
+
+### GET /exchange/:idUser
+Route pour récupérer tous les échanges que l'utilisateur a en cours
+
+Format Retour:
+{
+	
 }
 
 ## OPTION
-
 ### POST /option/editPseudo
 Route pour éditer le pseudo d'un compte.
 
@@ -206,14 +278,11 @@ Format attendu:
 }
 
 Format Retour:
--s'il existe: 
-{
-	"pseudo": true
-}
 -s'il n'existe pas:
 {
 	"pseudo": false
 }
+-s'il existe : code 400
 
 # BD
 

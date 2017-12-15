@@ -1,44 +1,30 @@
 'use strict';
 var _ = require('lodash');
-var https = require('https');
-var http = require('http');
+var request = require('../manager/requestManager');
 
 exports.pokedex = function(req, res) {
 
-	console.log("/pokedex")
+	console.log("/pokedex");
 
-	var options = "https://pokeapi.co/api/v2/pokemon/?limit=802";
+	var url = "https://pokeapi.co";
+	var path = "/api/v2/pokemon/?limit=802";
 
-	var data = "";
+	request.HTTPS(url, path, "GET")
+	.then(function(response){
+		var finalResult = [];
 
-	var request = https.get(options, (result) => {
-
-		result.on('data', (d) => {
-			data += d;
-		});
-
-		result.on('end', function() {
-			var tmpData = JSON.parse(data);
-
-			var finalResult = [];
-
-			for(var i=1; i<=802; i++){
-				finalResult.push({
-					"id": i,
-					"name": tmpData.results[i-1].name,
-					"urlPicture": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + i + ".png"
-				});
-			}
-			res.json(finalResult);
-		});
-
-	});
-
-	request.on('error', (e) => {
-		console.error(e);
-	});
-
-	request.end();
+		for(var i=1; i<=802; i++){
+			finalResult.push({
+				"id": i,
+				"name": response.results[i-1].name,
+				"urlPicture": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + i + ".png"
+			});
+		}
+		res.json(finalResult);
+	})
+	.catch(function(error){
+		res.sendStatus(500);
+	})
 }
 
 exports.pokemonDetails = function(req, res){
@@ -47,65 +33,45 @@ exports.pokemonDetails = function(req, res){
 
 	console.log("/pokemon/" + idPokemon);
 
-	var options = "https://pokeapi.co/api/v2/pokemon/" + idPokemon + "/";
-	var data = "";
-	var request = https.get(options, (result) => {
+	var resultData = {};
 
-		result.on('data', (d) => {
-			data += d;
+	var url = "https://pokeapi.co";
+	var path = "/api/v2/pokemon/" + idPokemon + "/";
+
+	request.HTTPS(url, path, "GET")
+	.then(function(response){
+		resultData = {
+			"id": response.id,
+			"name": response.name,
+			"weight": response.weight/10,
+			"height": response.height/10,
+			"type": "",
+			"urlPicture": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + idPokemon + ".png",
+			"cards": []
+		}	
+
+		response.types.forEach(function(type){
+			resultData.type += type.type.name + " ";
 		});
 
-		result.on('end', function() {
-			var tmpData = JSON.parse(data);
-			var resultData = {
-				"id": tmpData.id,
-				"name": tmpData.name,
-				"weight": tmpData.weight/10,
-				"height": tmpData.height/10,
-				"type": "",
-				"urlPicture": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + idPokemon + ".png",
-				"cards": []
-			}	
+		url = "https://api.pokemontcg.io";
+		path = "/v1/cards?name=" + response.name;
 
-			tmpData.types.forEach(function(type){
-				resultData.type += type.type.name + " ";
-			});
-
-			data = "";
-
-			var request2 = https.get("https://api.pokemontcg.io/v1/cards?name=" + tmpData.name, (results2) => {
-				
-				results2.on('data', (d) => {
-					data += d;
-				});
-
-				results2.on('end', function() {
-					var tmpCard = JSON.parse(data);
-					tmpCard.cards.forEach(function(card){
-						resultData.cards.push({
-							"id": card.id,
-							"urlPicture": card.imageUrl,
-							"price": price(card.rarity)
-						})
-					});
-					res.json(resultData);
-				});
-
-			});
-
-			request2.on('error', (e) => {
-				console.error(e);
-			});
-
-			request2.end();
+		return request.HTTPS(url, path, "GET");
+	})
+	.catch(function(error){
+		res.sendStatus(500);
+	})
+	.then(function(response){
+		response.cards.forEach(function(card){
+			resultData.cards.push({
+				"id": card.id,
+				"urlPicture": card.imageUrl,
+				"price": price(card.rarity)
+			})
 		});
-	});
-
-	request.on('error', (e) => {
-		console.error(e);
-	});
-
-	request.end();
+		res.json(resultData);
+	})
 }
 
 var price = function(rarity){

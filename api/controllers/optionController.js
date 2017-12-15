@@ -16,8 +16,7 @@ exports.editPseudo = function(req, res){
 	var pseudo = req.body.pseudo;
 
 	connection.query('UPDATE User SET pseudo="' + pseudo + '" WHERE idUser=' + idUser, function(error, results, fields){
-		res.status(200);
-		res.send();
+		res.sendStatus(200);
 	});
 }
 
@@ -28,7 +27,7 @@ exports.verifyPseudo = function(req, res){
 
 	connection.query("SELECT pseudo FROM User WHERE pseudo LIKE '" + pseudo + "'", function(error, results, fields){
 		if(results.length > 0){
-			res.json({"pseudo": true});
+			res.sendStatus(400)
 		}else{
 			res.json({"pseudo": false});
 		}
