@@ -254,7 +254,11 @@ Route pour récupérer tous les échanges que l'utilisateur a en cours
 
 Format Retour:
 {
-	
+	"idEchange": Int,
+	"idSender": Int,
+	"idReceiver": Int,
+	"idCard": String,
+	"stauts": String
 }
 
 ## OPTION
@@ -266,8 +270,6 @@ Format attendu:
 	"idUser": Int,
 	"pseudo": String
 }
-
-Format Retour: {}
 
 ### POST /option/verifyPseudo
 Route pour vérifier si le pseudo existe déjà.
@@ -290,11 +292,11 @@ CREATE TABLE `User` (
 `idUser` int(255) unsigned NOT NULL AUTO_INCREMENT,
 `pseudo` varchar(255) NOT NULL DEFAULT '',
 `password` varchar(255) NOT NULL,
-`pokemon` longtext,
-`cards` longtext,
-`pokecoin` int(11) DEFAULT '0',
+`listePokemon` longtext,
+`listeCards` longtext,
+`pokeCoin` int(11) DEFAULT '0',
 `friends` varchar(255) DEFAULT '',
-`profilePicture` longtext,
+`picture` longtext,
 `idAccount` varchar(255) DEFAULT NULL,
 PRIMARY KEY (`idUser`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
