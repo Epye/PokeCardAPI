@@ -168,6 +168,23 @@ Format attendu:
 	"pseudoFriend": String
 }
 
+### GET /user/:idUser/getFriends
+
+Format retour:
+[{
+	"idUser": String, 
+	"pseudo": String, 
+	"picture": String,
+	"nbCartes": Int
+}]
+
+### DELETE /user/:idUser/delFriend
+
+Format attendu:
+{
+	"pseudoFriend": String
+}
+
 ## POKEMON:
 ### GET /pokedex
 Route pour récupérer le pokedex.

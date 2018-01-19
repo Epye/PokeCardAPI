@@ -7,6 +7,7 @@ exports.booster = function(req, res){
 
 	console.log("/cards/"+ idUser + "/booster");
 	var idPokemons = [];
+	var pokemons = [];
 	var finalResult = {
 		"idUser": idUser,
 		"cards": []
@@ -41,6 +42,7 @@ exports.booster = function(req, res){
 					}
 				}
 				finalResult.cards.push(tmp);
+				pokemons.push(tmp.idPokemon);
 			}
 		}
 		return request.HTTP('127.0.0.1', '/user/addCard', "POST", finalResult);

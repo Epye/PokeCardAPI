@@ -38,7 +38,6 @@ exports.signup = function(req, res) {
 	var pseudo = req.body.pseudo;
 	var password = req.body.password;
 	password = bcrypt.hashSync(password);
-	
 
 	var response = {};
 	connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
@@ -46,7 +45,15 @@ exports.signup = function(req, res) {
 			connection.query('INSERT INTO User (pseudo, password, picture) VALUES ("' + pseudo + '", "' + password + '", "https://eternia.fr/public/media/sl/sprites/formes/025_kanto.png")', function(error, results, fiels) {
 				connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 					if(results.length > 0) {
-						res.json(formatResponse(results[0]));
+						var url = "127.0.0.1";
+						var path = "/cards/"+results[0].idUser+"/booster";
+						request.HTTP(url, path, "GET")
+						.then(function(response){
+							res.json(response);
+						})
+						.catch(function(error){
+							res.json(formatResponse(results[0]));
+						})
 					}
 				});
 			});

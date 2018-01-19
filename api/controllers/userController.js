@@ -204,27 +204,68 @@ exports.addFriend = function(req, res){
 		if(results.length > 0){
 			var userFriends = results[0].friends;
 
-			connection.query("SELECT friends FROM User WHERE pseudo LIKE \""+pseudoFriend+"\"", function(error, results, fields){
+			if(userFriends.includes(idFriend)){
+				res.sendStatus(400);
+			}else{
+				if(userFriends.length == 0){
+					userFriends = idFriend;
+				}else{
+					userFriends += "," + idFriend;
+				}
+				connection.query("UPDATE User SET friends=\""+userFriends+"\" WHERE idUser="+idUser, function(){});
+				res.sendStatus(200);
+			}
+		}else{
+			res.sendStatus(400);
+		}
+	})
+}
+
+exports.delFriend = function(req, res){
+	var idUser = req.params.idUser;
+	console.log("/user/" + idUser + "/delFriend");
+	var pseudoFriend = req.body.pseudoFriend;
+
+	connection.query("SELECT friends FROM User WHERE idUser="+idUser, function(error, results, fields){
+		if(results.length > 0){
+			var userFriends = results[0].friends;
+
+			if(!userFriends.includes(idFriend)){
+				res.sendStatus(400);
+			}else{
+				userFriends = userFriends.replace(pseudoFriend, "");
+				userFriends = userFriends.replace(",,", ",");
+				connection.query("UPDATE User SET friends=\""+userFriends+"\" WHERE idUser="+idUser, function(){});
+				res.sendStatus(200);
+			}
+		}else{
+			res.sendStatus(400);
+		}
+	})
+}
+
+exports.getFriends = function(req, res){
+	var idUser = req.params.idUser;
+	console.log("/user/" + idUser + "/getFriends");
+
+	connection.query("SELECT friends FROM User WHERE idUser="+idUser, function(error, results, fields){
+		if(results.length > 0){
+			var userFriends = results[0].friends;
+
+			connection.query("SELECT * FROM User", function(error, results, fields){
 				if(results.length > 0){
-					var idFriend = results[0].idUser;
-					var friends = results[0].friends;
-					if(userFriends.includes(idFriend)){
-						res.sendStatus(400);
-					}else{
-						if(userFriends.length == 0){
-							userFriends = idFriend;
-						}else{
-							userFriends += "," + idFriend;
+					var friends = [];
+					results.forEach(function(user){
+						if(userFriends.includes(user.idUser)){
+							friends.push({
+								"idUser": user.idUser,
+								"pseudo": user.pseudo,
+								"picture": user.picture,
+								"nbCartes": user.listeCards.split(",").length
+							});
 						}
-						if(friends.length > 0){
-							friends = idUser;
-						}else{
-							friends += "," + idUser;
-						}
-						connection.query("UPDATE User SET friends=\""+userFriends+"\" WHERE idUser="+idUser, function(){});
-						connection.query("UPDATE User SET friends=\""+friends+"\" WHERE idUser="+idFriend, function(){});
-						res.sendStatus(200);
-					}
+					})
+					res.json(friends);
 				}else{
 					res.sendStatus(400);
 				}
