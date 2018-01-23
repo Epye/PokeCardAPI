@@ -213,7 +213,11 @@ exports.addFriend = function(req, res){
 					userFriends += "," + idFriend;
 				}
 				connection.query("UPDATE User SET friends=\""+userFriends+"\" WHERE idUser="+idUser, function(){});
-				res.sendStatus(200);
+				connection.query("SELECT * FROM User WHERE pseudo LIKE \""+ pseudoFriend + "\"", function(error, results, fields){
+					if(results.length > 0){
+						res.json(formatResponse(results[0]));
+					}
+				});
 			}
 		}else{
 			res.sendStatus(400);

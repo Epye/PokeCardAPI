@@ -44,7 +44,17 @@ exports.getExchange = function(req, res){
 
 			var exchanges = [];
 			results.forEach(function(result){
-				if(result.idReceiver == idReceiver || result.idSender == idReceiver){
+				if(result.idReceiver == idReceiver){
+					exchanges.push({
+						"idEchange": result.idEchange,
+						"idReceiver": result.idReceiver,
+						"idSender": result.idSender,
+						"idCard": result.idCard,
+						"cardName": result.cardName,
+						"cardPicture": result.cardPicture,
+						"status": "received"
+					});
+				}else if (result.idSender == idReceiver){
 					exchanges.push({
 						"idEchange": result.idEchange,
 						"idReceiver": result.idReceiver,
@@ -66,7 +76,8 @@ exports.getExchange = function(req, res){
 							"idEchange": exchange.idEchange,
 							"idSender": exchange.idSender,
 							"pseudoSender": "",
-							"pictureSender": "",
+							"idReceiver": exchange.idReceiver,
+							"pseudoReceiver": "",
 							"cardPicture": exchange.cardPicture,
 							"cardName": exchange.cardName,
 							"status": exchange.status
@@ -75,11 +86,15 @@ exports.getExchange = function(req, res){
 						users.forEach(function(user){
 							if(user.idUser == exchange.idSender){
 								tmpExchange.pseudoSender = user.pseudo;
-								tmpExchange.pictureSender = user.picture;
+							}
+							if(user.idUser == exchange.idReceiver){
+								tmpExchange.pseudoReceiver = user.pseudo;
 							}
 						})
 						response.push(tmpExchange);
 					})
+					response = _.sortBy(response, function(o){ return o.idEchange});
+					response = _.reverse(response);
 					res.json(response);
 				}else{
 					res.sendStatus(500);

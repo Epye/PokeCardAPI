@@ -55,7 +55,7 @@ exports.pokemonDetails = function(req, res){
 		});
 
 		url = "https://api.pokemontcg.io";
-		path = "/v1/cards?name=" + response.name;
+		path = "/v1/cards?nationalPokedexNumber=" + response.id;
 
 		return request.HTTPS(url, path, "GET");
 	})

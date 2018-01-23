@@ -1,11 +1,12 @@
-'use strict';
+    'use strict';
 var _ = require('lodash');
 var request = require("../manager/requestManager");
 
 exports.booster = function(req, res){
 	var idUser = req.params.idUser;
+	var nbCartes = req.params.nbCartes;
 
-	console.log("/cards/"+ idUser + "/booster");
+	console.log("/cards/"+ idUser + "/booster/" + nbCartes);
 	var idPokemons = [];
 	var pokemons = [];
 	var finalResult = {
@@ -13,7 +14,7 @@ exports.booster = function(req, res){
 		"cards": []
 	};
 
-	for(let i=0; i<10; i++){
+	for(let i=0; i<nbCartes; i++){
 		idPokemons.push(Math.floor(Math.random()*802)+1);
 	}
 
@@ -28,7 +29,7 @@ exports.booster = function(req, res){
 	.then(function(response){
 		var tmpCard = response;
 		if(tmpCard.cards.length > 0){
-			for(let i=0; i < 10; i++){
+			for(let i=0; i < nbCartes; i++){
 				var index = Math.floor(Math.random()*tmpCard.cards.length);
 				var tmp = {
 					"id": tmpCard.cards[index].id,
@@ -42,7 +43,6 @@ exports.booster = function(req, res){
 					}
 				}
 				finalResult.cards.push(tmp);
-				pokemons.push(tmp.idPokemon);
 			}
 		}
 		return request.HTTP('127.0.0.1', '/user/addCard', "POST", finalResult);

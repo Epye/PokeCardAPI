@@ -27,7 +27,7 @@ module.exports = function(app) {
 	app.route('/pokemon/:idPokemon').get(pokemonController.pokemonDetails);
 
 	//CARTES
-	app.route('/cards/:idUser/booster').get(cardsController.booster);
+	app.route('/cards/:idUser/booster/:nbCartes').get(cardsController.booster);
 	app.route('/cards/:idPokemon').get(cardsController.cardsPokemon);
 
 	//EXCHANGES
@@ -38,6 +38,7 @@ module.exports = function(app) {
 
 	//QUIZZ
 	app.route('/quizz/category').get(quizzController.category);
+	app.route('/quizz/:quizzId').get(quizzController.quizz);
 
 	//OPTION
 	app.route('/option/editPseudo').post(optionController.editPseudo);
