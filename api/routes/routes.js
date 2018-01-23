@@ -33,6 +33,7 @@ module.exports = function(app) {
 	//EXCHANGES
 	app.route('/exchange/send').post(exchangeController.send);
 	app.route('/exchange/add').post(exchangeController.add);
+	app.route('/exchange/:idReceiver').get(exchangeController.getExchange);
 	app.route('/exchange/:idEchange').delete(exchangeController.remove);
 
 	//QUIZZ

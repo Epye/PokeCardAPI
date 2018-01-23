@@ -11,3 +11,4 @@ exports.category = function(req, res){
 		res.json(response);
 	})
 }
+

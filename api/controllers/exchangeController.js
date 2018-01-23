@@ -18,17 +18,76 @@ exports.add = function(req, res){
 	var idCard = req.body.idCard;
 	var status = req.body.status;
 
-	connection.query("INSERT INTO Exchange (idSender, idReceiver, idCard, status) VALUES (" + idSender + ", " + idReceiver + ", \"" + idCard + "\", \"" + status+  "\")", function(error, results, fields){
-		res.json({"OK": "OK"});
-	});
+	var url = "https://api.pokemontcg.io";
+	var path = "/v1/cards?id="+idCard;
+
+	request.HTTPS(url, path, "GET")
+	.then(function(response){
+		connection.query("INSERT INTO Exchange (idSender, idReceiver, idCard, cardName, cardPicture, status) VALUES (" + idSender + ", " + idReceiver + ", \"" + idCard + "\", \"" + response.cards[0].name + "\", \"" + response.cards[0].imageUrl + "\", \"" + status+  "\")", function(error, results, fields){
+			res.json({"OK": "OK"});
+		});
+	})
+	.catch(function(){
+		res.sendStatus(500);
+	})
+
+	
 }
 
 exports.getExchange = function(req, res){
 	var idReceiver = req.params.idReceiver;
 	console.log("/exchange/" + idReceiver);
+	var response = [];
 
-	connection.query("SELECT * FROM Exchange WHERE idReceiver=" + idReceiver, function(error, results, fields){
-		res.json(results);
+	connection.query("SELECT * FROM Exchange", function(error, results, fields){
+		if(results.length > 0){
+
+			var exchanges = [];
+			results.forEach(function(result){
+				if(result.idReceiver == idReceiver || result.idSender == idReceiver){
+					exchanges.push({
+						"idEchange": result.idEchange,
+						"idReceiver": result.idReceiver,
+						"idSender": result.idSender,
+						"idCard": result.idCard,
+						"cardName": result.cardName,
+						"cardPicture": result.cardPicture,
+						"status": result.status
+					});
+				}
+			})
+
+			connection.query("SELECT * FROM User", function(error, result, fields){
+				if(result.length > 0){
+					var users = result;
+
+					exchanges.forEach(function(exchange){
+						var tmpExchange = {
+							"idEchange": exchange.idEchange,
+							"idSender": exchange.idSender,
+							"pseudoSender": "",
+							"pictureSender": "",
+							"cardPicture": exchange.cardPicture,
+							"cardName": exchange.cardName,
+							"status": exchange.status
+						};
+
+						users.forEach(function(user){
+							if(user.idUser == exchange.idSender){
+								tmpExchange.pseudoSender = user.pseudo;
+								tmpExchange.pictureSender = user.picture;
+							}
+						})
+						response.push(tmpExchange);
+					})
+					res.json(response);
+				}else{
+					res.sendStatus(500);
+				}
+			})
+		}else{
+			res.json([]);
+		}
 	})
 }
 
@@ -47,6 +106,7 @@ exports.send = function(req, res){
 	var idSender = req.body.idSender;
 	var idReceiver = req.body.idReceiver;
 	var idCard = req.body.idCard;
+	var status = req.body.status;
 
 	var user = {};
 
@@ -77,7 +137,7 @@ exports.send = function(req, res){
 			"idSender": idSender,
 			"idReceiver": idReceiver,
 			"idCard": idCard,
-			"status": "send"
+			"status": status
 		}
 		request.HTTP(url, path, "POST", body);
 	})
