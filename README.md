@@ -334,3 +334,14 @@ CREATE TABLE `User` (
 `idAccount` varchar(255) DEFAULT NULL,
 PRIMARY KEY (`idUser`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `Exchange` (
+`idEchange` int(255) unsigned NOT NULL AUTO_INCREMENT,
+`idSender` varchar(255) NOT NULL DEFAULT '',
+`idReceiver` varchar(255) NOT NULL,
+`idCard` varchar(255) NOT NULL,
+`cardName` varchar(255) NOT NULL,
+`cardPicture` varchar(255) NOT NULL,
+`status` varchar(255) DEFAULT '',
+PRIMARY KEY (`idEchange`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
