@@ -303,6 +303,26 @@ Format Retour:
 }
 -s'il existe : code 400
 
+##QUIZZ
+### POST /quizz/results
+Route pour récupérer les gains du quizz
+Format attendu:
+{
+	"idUser": Int,
+	"score": Int,
+} 
+
+Format Retour:
+{
+	"pokeCoinsWin": pokeCoins,
+	"cardsWin": response.cards,
+	"messageResult": 
+		{ 
+			"message": String,
+			"img": "String"
+		}	
+}
+
 # BD
 
 CREATE TABLE `User` (

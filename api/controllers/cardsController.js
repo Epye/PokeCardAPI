@@ -33,12 +33,16 @@ exports.booster = function(req, res){
 				var index = Math.floor(Math.random()*tmpCard.cards.length);
 				var tmp = {
 					"id": tmpCard.cards[index].id,
+					"picture": tmpCard.cards[index].imageUrl,
+					"pokemon": tmpCard.cards[index].name,
 					"idPokemon": tmpCard.cards[index].nationalPokedexNumber
 				}
 				while(_.findIndex(finalResult.cards, tmp) != -1){
 					index = Math.floor(Math.random()*tmpCard.cards.length);
 					tmp = {
 						"id": tmpCard.cards[index].id,
+						"picture": tmpCard.cards[index].imageUrl,
+						"pokemon": tmpCard.cards[index].name,
 						"idPokemon": tmpCard.cards[index].nationalPokedexNumber
 					}
 				}
@@ -52,7 +56,7 @@ exports.booster = function(req, res){
 		console.log(error);
 	})
 	.then(function(response){
-		res.json(response);
+		res.json(finalResult);
 	})
 }
 

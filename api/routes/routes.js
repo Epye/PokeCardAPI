@@ -15,12 +15,14 @@ module.exports = function(app) {
 
 	//USER
 	app.route('/user/addCard').post(userController.addCard);
+	app.route('/user/:idUser').get(userController.getUser);
 	app.route('/user/removeCard').delete(userController.removeCard);
 	app.route('/user/:idUser/pokedex').get(userController.userPokedex);
 	app.route('/user/:idUser/:idPokemon/cards').get(userController.getCardsPokemonUser);
 	app.route('/user/:idUser/addFriend').post(userController.addFriend);
 	app.route('/user/:idUser/getFriends').get(userController.getFriends);
-	app.route('/user/:idUser/delFriends').delete(userController.delFriend);
+	app.route('/user/:idUser/delFriend').post(userController.delFriend);
+	app.route('/user/addPokeCoins').post(userController.addPokeCoins);
 
 	//POKEMON
 	app.route('/pokedex').get(pokemonController.pokedex);
@@ -39,6 +41,7 @@ module.exports = function(app) {
 	//QUIZZ
 	app.route('/quizz/category').get(quizzController.category);
 	app.route('/quizz/:quizzId').get(quizzController.quizz);
+	app.route('/quizz/results').post(quizzController.results);
 
 	//OPTION
 	app.route('/option/editPseudo').post(optionController.editPseudo);

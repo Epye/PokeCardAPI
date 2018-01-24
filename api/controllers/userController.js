@@ -52,6 +52,19 @@ exports.userPokedex = function(req, res){
 	})
 }
 
+exports.getUser = function(req, res){
+	var idUser = req.params.idUser;
+	console.log('/user/'+idUser);
+
+	connection.query("SELECT * FROM User WHERE idUser="+idUser, function(error, results, fields){
+		if(results.length > 0){
+			res.json(formatResponse(results[0]));
+		}else{
+			res.sendStatus(400);
+		}
+	});
+}
+
 exports.addCard = function(req, res){
 	console.log('/user/addCard');
 
@@ -204,20 +217,35 @@ exports.addFriend = function(req, res){
 		if(results.length > 0){
 			var userFriends = results[0].friends;
 
-			if(userFriends.includes(idFriend)){
+			if(userFriends.includes(pseudoFriend)){
 				res.sendStatus(400);
 			}else{
-				if(userFriends.length == 0){
-					userFriends = idFriend;
-				}else{
-					userFriends += "," + idFriend;
-				}
-				connection.query("UPDATE User SET friends=\""+userFriends+"\" WHERE idUser="+idUser, function(){});
-				connection.query("SELECT * FROM User WHERE pseudo LIKE \""+ pseudoFriend + "\"", function(error, results, fields){
+				connection.query("SELECT * FROM User", function(error, results, fields){
 					if(results.length > 0){
-						res.json(formatResponse(results[0]));
+						var tmp = false;
+						results.forEach(function(user){
+							if(user.pseudo == pseudoFriend){
+								tmp = true;
+							}
+						})
+						if(tmp){
+							if(userFriends.length == 0){
+								userFriends = pseudoFriend;
+							}else{
+								userFriends += "," + pseudoFriend;
+							}
+							connection.query("UPDATE User SET friends=\""+userFriends+"\" WHERE idUser="+idUser, function(){});
+							request.HTTP('127.0.0.1', '/user/'+idUser+'/getFriends', 'GET')
+							.then(function(response){
+								res.json(response);
+							})
+						} else{
+							res.sendStatus(400);
+						}
+					} else {
+						res.sendStatus(500);
 					}
-				});
+				})
 			}
 		}else{
 			res.sendStatus(400);
@@ -234,13 +262,16 @@ exports.delFriend = function(req, res){
 		if(results.length > 0){
 			var userFriends = results[0].friends;
 
-			if(!userFriends.includes(idFriend)){
+			if(!userFriends.includes(pseudoFriend)){
 				res.sendStatus(400);
 			}else{
 				userFriends = userFriends.replace(pseudoFriend, "");
 				userFriends = userFriends.replace(",,", ",");
 				connection.query("UPDATE User SET friends=\""+userFriends+"\" WHERE idUser="+idUser, function(){});
-				res.sendStatus(200);
+				request.HTTP('127.0.0.1', '/user/'+idUser+'/getFriends', 'GET')
+				.then(function(response){
+					res.json(response);
+				})
 			}
 		}else{
 			res.sendStatus(400);
@@ -260,7 +291,7 @@ exports.getFriends = function(req, res){
 				if(results.length > 0){
 					var friends = [];
 					results.forEach(function(user){
-						if(userFriends.includes(user.idUser)){
+						if(userFriends.includes(user.pseudo)){
 							friends.push({
 								"idUser": user.idUser,
 								"pseudo": user.pseudo,
@@ -278,6 +309,24 @@ exports.getFriends = function(req, res){
 			res.sendStatus(400);
 		}
 	})
+}
+
+exports.addPokeCoins = function(req, res){
+	var idUser = req.body.idUser;
+	console.log("/user/addPokeCoins");
+
+	var pokeCoinsWin = req.body.pokeCoins;
+
+	connection.query("SELECT * FROM User WHERE idUser="+idUser, function(error, results, fields){
+		if(results.length > 0){
+			var userPokeCoins = parseInt(results[0].pokeCoin);
+			userPokeCoins += pokeCoinsWin;
+			connection.query("UPDATE User SET pokeCoin=" + userPokeCoins +" WHERE idUser="+idUser, function(){});
+			res.sendStatus(200);
+		} else { 
+			res.sendStatus(500);
+		}
+	});
 }
 
 
