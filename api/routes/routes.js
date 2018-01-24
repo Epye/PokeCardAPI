@@ -31,6 +31,7 @@ module.exports = function(app) {
 	//CARTES
 	app.route('/cards/:idUser/booster/:nbCartes').get(cardsController.booster);
 	app.route('/cards/:idPokemon').get(cardsController.cardsPokemon);
+	app.route('/cards/buy').post(cardsController.buyCards);
 
 	//EXCHANGES
 	app.route('/exchange/send').post(exchangeController.send);

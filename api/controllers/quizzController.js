@@ -1,6 +1,7 @@
 'use strict';
 var _ = require('lodash');
 var request = require("../manager/requestManager");
+var translate = require('google-translate-api');
 
 exports.category = function(req, res){
 	console.log("/quizz/category");
@@ -65,7 +66,21 @@ exports.quizz = function(req, res){
 				"correct": result.correct_answer
 			});
 		})
-		res.json(tmpResponse);
+		var promiseArray = [];
+		tmpResponse.forEach(function(question){
+			var promise = translate(question.question, {to: 'fr'})
+			.then(function(response){
+				return Promise.resolve({
+					"question": response.text,
+					"correct": question.correct
+				});
+			});
+			promiseArray.push(promise);
+		})
+		Promise.all(promiseArray)
+		.then(function(response){
+			res.json(response);
+		})
 	})
 }
 
@@ -77,7 +92,7 @@ exports.results = function(req, res){
 	var nbCards = 0;
 
 	if(score >= 2){
-		pokeCoins = score*15;
+		pokeCoins = score*10 + score*Math.ceil(Math.random()*10);
 
 		if(score >= 5){
 			nbCards = Math.floor(score/2);
@@ -95,10 +110,12 @@ exports.results = function(req, res){
 			}
 		})
 		.then(function(response){
+			var tmp = messageResult(score);
 			var tmpResponse = {
 				"pokeCoinsWin": pokeCoins,
 				"cardsWin": response.cards,
-				"messageResult": messageResult(score),
+				"message": tmp.message,
+				"img": tmp.img
 
 			}
 			res.json(tmpResponse);
@@ -149,6 +166,9 @@ var messageResult = function(score){
 var convertSpecialCharacter = function(str){
 	while(str.includes("&#039;")){
 		str = str.replace("&#039;", "'");
+	}
+	while(str.includes("&rsquo;")){
+		str = str.replace("&rsquo;", "'");
 	}
 	while(str.includes("&quot;")){
 		str = str.replace("&quot;", "\"");

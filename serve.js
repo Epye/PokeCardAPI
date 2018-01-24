@@ -19,6 +19,28 @@ global.formatArray = function(data){
 	}
 }
 
+global.price = function(rarity){
+	if(rarity == "Common"){
+		return 100;
+	}else if (rarity == "Uncommon"){
+		return 150;
+	}else if (rarity == "Rare"){
+		return 200;
+	}else if (rarity == "Rare Holo"){
+		return 250;
+	}else if (rarity == "Rare Ultra"){
+		return 300;
+	}else if (rarity == "Rare Holo EX"){
+		return 500;
+	}else if (rarity == "Rare Holo Lv.X"){
+		return 500;
+	}else{
+		return 400;
+	}
+}
+
+global.PRICE_UNIT_CARD = 50;
+
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 

@@ -1,6 +1,16 @@
     'use strict';
 var _ = require('lodash');
+var mysql = require('mysql');
 var request = require("../manager/requestManager");
+
+var connection = mysql.createConnection({
+	host: 'localhost',
+	user: 'root',
+	password: '',
+	database: 'pokecard'
+});
+
+connection.connect();
 
 exports.booster = function(req, res){
 	var idUser = req.params.idUser;
@@ -14,7 +24,7 @@ exports.booster = function(req, res){
 		"cards": []
 	};
 
-	for(let i=0; i<nbCartes; i++){
+	for(let i=0; i<20; i++){
 		idPokemons.push(Math.floor(Math.random()*802)+1);
 	}
 
@@ -79,5 +89,29 @@ exports.cardsPokemon = function(req, res){
 			});
 		});
 		res.json(result);
+	})
+}
+
+exports.buyCards = function(req, res){
+	console.log("/cards/buy");
+
+	var nbCartes = req.body.nbCartes;
+	var idUser = req.body.idUser;
+
+	connection.query("SELECT * FROM User WHERE idUser="+idUser, function(error, results, fields){
+		if(results.length > 0){
+			if(results[0].pokeCoin >= nbCartes * PRICE_UNIT_CARD){
+				var pokeCoin = results[0].pokeCoin;
+				pokeCoin -= nbCartes * PRICE_UNIT_CARD;
+
+				request.HTTP("127.0.0.1", "/cards/"+idUser+"/booster/"+nbCartes, "GET")
+				.then(function(response){
+					connection.query("UPDATE User SET pokeCoin="+pokeCoin+" WHERE idUser="+idUser, function(error, results, fields){});
+					res.json(response);
+				})
+			}else{
+				res.json({"pokeCoin": false});
+			}
+		}
 	})
 }

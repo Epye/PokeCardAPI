@@ -315,7 +315,6 @@ Format attendu:
 Format Retour:
 {
 	"pokeCoinsWin": Int,
-	"pokeCoins": Int,
 	"cardsWin": [],
 	"message": String,
 	"img": "String"
