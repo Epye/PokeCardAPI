@@ -322,7 +322,7 @@ exports.addPokeCoins = function(req, res){
 			var userPokeCoins = parseInt(results[0].pokeCoin);
 			userPokeCoins += pokeCoinsWin;
 			connection.query("UPDATE User SET pokeCoin=" + userPokeCoins +" WHERE idUser="+idUser, function(){});
-			res.sendStatus(200);
+			res.json({"OK": "OK"});
 		} else { 
 			res.sendStatus(500);
 		}

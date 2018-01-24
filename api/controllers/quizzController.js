@@ -101,8 +101,7 @@ exports.results = function(req, res){
 				"messageResult": messageResult(score),
 
 			}
-			console.log("TEST")
-			res.json(response);
+			res.json(tmpResponse);
 		})
 	} else {
 

@@ -303,7 +303,7 @@ Format Retour:
 }
 -s'il existe : code 400
 
-##QUIZZ
+## QUIZZ
 ### POST /quizz/results
 Route pour récupérer les gains du quizz
 Format attendu:
@@ -314,13 +314,11 @@ Format attendu:
 
 Format Retour:
 {
-	"pokeCoinsWin": pokeCoins,
-	"cardsWin": response.cards,
-	"messageResult": 
-		{ 
-			"message": String,
-			"img": "String"
-		}	
+	"pokeCoinsWin": Int,
+	"pokeCoins": Int,
+	"cardsWin": [],
+	"message": String,
+	"img": "String"
 }
 
 # BD
