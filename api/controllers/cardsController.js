@@ -52,7 +52,7 @@ exports.booster = function(req, res){
 					"id": tmpCard.cards[index].id,
 					"urlPicture": tmpCard.cards[index].imageUrl,
 					"idPokemon": tmpCard.cards[index].nationalPokedexNumber,
-					"price": 0
+					"price": price(tmpCard.cards[index].rarity)
 				}
 				while(_.findIndex(finalResult.cards, tmp) != -1){
 					index = Math.floor(Math.random()*tmpCard.cards.length);
@@ -60,7 +60,7 @@ exports.booster = function(req, res){
 						"id": tmpCard.cards[index].id,
 						"urlPicture": tmpCard.cards[index].imageUrl,
 						"idPokemon": tmpCard.cards[index].nationalPokedexNumber,
-						"price": 0
+						"price": price(tmpCard.cards[index].rarity)
 					}
 				}
 				idCards.push(tmp.id);
@@ -87,7 +87,7 @@ exports.cardsPokemon = function(req, res){
 	console.log("/cards/"+idPokemon);
 
 	var url = "https://api.pokemontcg.io";
-	var path = "/v1/cards?nationalPokedexNumber="+idPokemon;
+	var path = "/v1/cards?nationalPokedexNumber="+rarity;
 
 	request.HTTPS(url, path, "GET")
 	.then(function(response){
@@ -97,7 +97,7 @@ exports.cardsPokemon = function(req, res){
 				"id": card.id,
 				"idPokemon": card.nationalPokedexNumber,
 				"urlPicture": card.imageUrl,
-				"price": 0
+				"price": price(card.rarity)
 			});
 		});
 		res.json(result);
@@ -105,7 +105,7 @@ exports.cardsPokemon = function(req, res){
 }
 
 exports.getBoosters = function(req, res){
-	//console.log("/cards/boosters");
+	console.log("/cards/list/boosters");
 	res.json(listBoosters());
 }
 
@@ -114,6 +114,7 @@ exports.buyCards = function(req, res){
 
 	var nbCartes = req.body.nbCartes;
 	var idUser = req.body.idUser;
+
 	var tmpBooster = listBoosters(nbCartes);
 
 	connection.query("SELECT * FROM User WHERE idUser="+idUser, function(error, results, fields){
@@ -125,7 +126,7 @@ exports.buyCards = function(req, res){
 				request.HTTP("127.0.0.1", "/cards/"+idUser+"/booster/"+nbCartes, "GET")
 				.then(function(response){
 					connection.query("UPDATE User SET pokeCoin="+pokeCoin+" WHERE idUser="+idUser, function(error, results, fields){});
-					res.json(response);
+					res.json(response.cards);
 				})
 			}else{
 				res.json({"pokeCoin": false});
@@ -134,33 +135,83 @@ exports.buyCards = function(req, res){
 	})
 }
 
+exports.sellCards = function(req, res){
+	console.log("/cards/sell");
+
+	var idCard = req.body.idCard;
+	var idUser = req.body.idUser;
+	var cardPrice = 0;
+
+	var url = "https://api.pokemontcg.io";
+	var path = "/v1/cards?id="+idCard;
+
+	request.HTTPS(url, path, "GET")
+	.then(function(response){
+		cardPrice = price(response.cards[0].rarity);
+
+		var body = {
+			"idUser": idUser,
+			"idCard": idCard
+		}
+
+		return HTTP.request('127.0.0.1', '/user/removeCard', "POST", body);
+	})
+	.then(function(response){
+		var body = {
+			"idUser": idUser,
+			"pokeCoins": cardPrice 
+		}
+		return HTTP.request('127.0.0.1', '/user/addPokeCoins', "POST", body);
+	})
+	.then(function(response){
+		return HTTP.request('127.0.0.1', '/user/'+idUser, 'GET');
+	})
+	.then(function(response){
+		return res.json(response);
+	})
+	.catch(function(){
+		res.sendStatus(500);
+	})
+}
+
 var listBoosters = function(nbCartes){
 	var boosters =[
+	{
+		"description": "Pack de 1 Carte",
+		"img": "https://www.lannier.fr/pokecard/booster1.png",
+		"nbCartes": 1,
+		"price": PRICE_UNIT_CARD*1
+	},
 	{
 		"description": "Pack de 5 Cartes",
 		"img": "https://www.lannier.fr/pokecard/booster5.png",
 		"nbCartes": 5,
-		"price": PRICE_UNIT_CARD*5
+		"price": PRICE_UNIT_CARD*4
 	},
 	{
 		"description": "Pack de 10 Cartes",
 		"img": "https://www.lannier.fr/pokecard/booster10.png",
 		"nbCartes": 10,
-		"price": PRICE_UNIT_CARD*9
+		"price": PRICE_UNIT_CARD*8
 	},
 	{
 		"description": "Pack de 20 Cartes",
 		"img": "https://www.lannier.fr/pokecard/booster20.png",
 		"nbCartes": 20,
-		"price": PRICE_UNIT_CARD*16
+		"price": PRICE_UNIT_CARD*15
 	},
 	{
 		"description": "Pack de 50 Cartes",
 		"img": "https://www.lannier.fr/pokecard/booster50.png",
 		"nbCartes": 50,
 		"price": PRICE_UNIT_CARD*42
+	},
+	{
+		"description": "Pack de 100 Carte",
+		"img": "https://www.lannier.fr/pokecard/booster100.png",
+		"nbCartes": 100,
+		"price": PRICE_UNIT_CARD*90
 	}];
-	console.log(boosters)
 	if(nbCartes == undefined){
 		return boosters;
 	} else {

@@ -229,6 +229,10 @@ exports.addFriend = function(req, res){
 		if(results.length > 0){
 			var userFriends = results[0].friends;
 
+			if(userFriends == null || userFriends == undefined){
+				userFriends = "";
+			}
+
 			if(userFriends.includes(pseudoFriend)){
 				res.sendStatus(400);
 			}else{

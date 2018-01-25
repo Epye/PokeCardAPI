@@ -8,10 +8,11 @@ aller dans le dossier que tu viens de cloner
 
 lancer npm install
 
-lancer npm run start
+lancer npm install pm2 -g
+
+lancer pm2 start serve.js
 
 l'adresse est ensuite localhost:3000
-
 
 # Liste des routes de l'API : 
 
@@ -272,6 +273,17 @@ Format Retour:
 	"price": Int
 }]
 
+### POST /cards/buy
+Route pour acheter des cartes
+
+Format Retour:
+[{
+    "id": String,
+    "urlPicture": String,
+    "idPokemon": Int,
+    "price": Int
+}]
+
 ## EXCHANGE
 ### POST /exchange/send
 Route pour envoyer une carte à un autre utilisateur
@@ -334,12 +346,10 @@ Format attendu:
 Route pour récupérer la liste des catégories du quizz
 
 Format Retour:
-[
-    {
-        "id": Int,
-        "name": String
-    }
-]
+[{
+    "id": Int,
+    "name": String
+}]
 
 ### GET /quizz/:quizzId
 Route pour récupérer les questions du quizz
