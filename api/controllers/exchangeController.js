@@ -30,8 +30,6 @@ exports.add = function(req, res){
 	.catch(function(){
 		res.sendStatus(500);
 	})
-
-	
 }
 
 exports.getExchange = function(req, res){

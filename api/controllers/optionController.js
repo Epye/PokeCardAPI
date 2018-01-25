@@ -44,3 +44,22 @@ exports.verifyPseudo = function(req, res){
 		}
 	});
 }
+
+exports.editZipCode = function(req, res){
+	console.log('/option/editZipCode');
+
+	var idUser = req.body.idUser;
+	var zipCode = req.body.zipCode;
+
+	var url = "https://api.openweathermap.org";
+	var path = "/data/2.5/weather?zip="+zipCode+",fr&units=metric&appid=4954128e227d8d77f59cd44d17dec764";
+
+	request.HTTPS(url, path, "GET")
+	.then(function(response){
+		connection.query('UPDATE User SET zipCode="' + zipCode + '" WHERE idUser=' + idUser, function(error, results, fields){});
+		res.json({"OK": "OK"})
+	})
+	.catch(function(response){
+		res.json({"zipCode": false})
+	})
+}

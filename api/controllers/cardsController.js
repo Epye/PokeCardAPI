@@ -31,7 +31,7 @@ exports.booster = function(req, res){
 		nbPokemon = nbCartes;
 	}
 
-	for(let i=0; i<20; i++){
+	for(let i=0; i<nbPokemon; i++){
 		idPokemons.push(Math.floor(Math.random()*802)+1);
 	}
 

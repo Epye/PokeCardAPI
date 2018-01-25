@@ -7,6 +7,7 @@ module.exports = function(app) {
 	var optionController = require('../controllers/optionController');
 	var userController = require('../controllers/userController');
 	var quizzController = require('../controllers/quizzController');
+	var weatherController = require('../controllers/weatherController');
 
 	//AUTHENTIFICATION
 	app.route('/login').post(authController.login);
@@ -48,4 +49,8 @@ module.exports = function(app) {
 	//OPTION
 	app.route('/option/editPseudo').post(optionController.editPseudo);
 	app.route('/option/verifyPseudo').post(optionController.verifyPseudo);
+	app.route('/option/editZipCode').post(optionController.editZipCode);
+
+	//WEATHER
+	app.route('/weather/:idUser').get(weatherController.weather);
 };

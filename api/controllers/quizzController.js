@@ -106,7 +106,7 @@ exports.results = function(req, res){
 	var nbCards = 0;
 
 	if(score >= 2){
-		pokeCoins = score*10 + score*Math.ceil(Math.random()*10);
+		pokeCoins = score*22 + score*Math.ceil(Math.random()*51);
 
 		if(score >= 5){
 			nbCards = Math.floor(score/2);

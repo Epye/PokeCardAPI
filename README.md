@@ -388,6 +388,7 @@ CREATE TABLE `User` (
   `friends` longtext,
   `picture` longtext,
   `idAccount` varchar(255) DEFAULT NULL,
+  `zipCode` varchar(255) NOT NULL DEFAULT '01000',
   PRIMARY KEY (`idUser`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 
