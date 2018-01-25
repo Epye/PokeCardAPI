@@ -39,6 +39,13 @@ global.price = function(rarity){
 	}
 }
 
+global.formatVirgule = function(str){
+	while(str.includes(",,")){
+		str = str.replace(",,", ",");
+	}
+	return str;
+}
+
 global.PRICE_UNIT_CARD = 50;
 
 app.use(bodyParser.urlencoded({ extended: true}));

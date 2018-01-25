@@ -48,7 +48,21 @@ exports.category = function(req, res){
 		}
 		]
 		_.pullAllWith(tmpResponse, categoryToDelete, _.isEqual);
-		res.json(tmpResponse);
+		var promiseArray = [];
+		tmpResponse.forEach(function(category){
+			var promise = translate(category.name, {to: 'fr'})
+			.then(function(response){
+				return Promise.resolve({
+					"id": category.id,
+					"name": response.text
+				});
+			});
+			promiseArray.push(promise);
+		})
+		Promise.all(promiseArray)
+		.then(function(response){
+			res.json(response);
+		})
 	})
 }
 
@@ -116,12 +130,18 @@ exports.results = function(req, res){
 				"cardsWin": response.cards,
 				"message": tmp.message,
 				"img": tmp.img
-
 			}
 			res.json(tmpResponse);
 		})
 	} else {
-
+		var tmp = messageResult(score);
+		var tmpResponse = {
+			"pokeCoinsWin": pokeCoins,
+			"cardsWin": [],
+			"message": tmp.message,
+			"img": tmp.img
+		}
+		res.json(tmpResponse);
 	}
 }
 

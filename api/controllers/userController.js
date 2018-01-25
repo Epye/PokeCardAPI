@@ -74,34 +74,46 @@ exports.addCard = function(req, res){
 	connection.query("SELECT * FROM User WHERE idUser="+idUser, function(error, results, fields){
 		if(results.length > 0){
 			var userCards = formatArray(results[0].listeCards);
-			var userPokemon = formatArray(results[0].listePokemon);
+			var userPokemon = results[0].listePokemon;
+			if(userPokemon == null || userPokemon == undefined){
+				userPokemon = "";
+			}
+
+			var url = "https://api.pokemontcg.io";
+			var path = "/v1/cards?id=";
 
 			cards.forEach(function(card){
-				userCards.push(card.id);
-				if(userPokemon.find(comparePokemon, card) == undefined){
-					userPokemon.push(card.idPokemon);
-				}
-			});
+				path += card + "|";
+			})
 
-			userPokemon = userPokemon.toString();
-			userCards = userCards.toString();
-
-			if(userPokemon.charAt(0) == ","){
-				userPokemon = userPokemon.replace(",", "");
-			}
-			if(userCards.charAt(0) == ","){
-				userCards = userCards.replace(",", "");
-			}
-
-			connection.query("UPDATE User SET listePokemon='" + userPokemon + "', listeCards='" + userCards + "' WHERE idUser="+idUser, function(error, results, fields){
-				connection.query("SELECT * FROM User WHERE idUser=" + idUser, function(error, results, fields){
-					if(results.length > 0){
-						res.json(formatResponse(results[0]));
-					}else{
-						res.sendStatus(400);
+			request.HTTPS(url, path, "GET")
+			.then(function(response){
+				cards.forEach(function(card, index){
+					userCards.push(card);
+					if(!userPokemon.includes(response.cards[index].nationalPokedexNumber)){
+						userPokemon += ","+response.cards[index].nationalPokedexNumber;
 					}
 				});
-			});
+
+				userCards = userCards.toString();
+
+				if(userPokemon.charAt(0) == ","){
+					userPokemon = userPokemon.replace(",", "");
+				}
+				if(userCards.charAt(0) == ","){
+					userCards = userCards.replace(",", "");
+				}
+
+				connection.query("UPDATE User SET listePokemon='" + userPokemon + "', listeCards='" + userCards + "' WHERE idUser="+idUser, function(error, results, fields){
+					connection.query("SELECT * FROM User WHERE idUser=" + idUser, function(error, results, fields){
+						if(results.length > 0){
+							res.json(formatResponse(results[0]));
+						}else{
+							res.sendStatus(400);
+						}
+					});
+				});
+			})
 		}else{
 			res.sendStatus(400)
 		}
@@ -140,18 +152,18 @@ exports.removeCard = function(req, res){
 				response.cards.forEach(function(card){
 					cards.push(card.id);
 				})
-
-				userCards = userCards.replace(idCard, "").replace(",,", ",");
+				userCards = formatVirgule(userCards.replace(idCard, ""));
 
 				var hasCard = false;
 				cards.forEach(function(card){
+					console.log(card)
 					if(userCards.includes(card)){
 						hasCard = true;
 						return false;
 					}
 				})
 				if(!hasCard){
-					userPokemon = userPokemon.replace(idPokemon, "");
+					userPokemon = formatVirgule(userPokemon.replace(idPokemon.toString(), ""));
 				}
 
 				if(userPokemon.length > 0 && userPokemon.charAt(0) == ","){
@@ -286,6 +298,9 @@ exports.getFriends = function(req, res){
 	connection.query("SELECT friends FROM User WHERE idUser="+idUser, function(error, results, fields){
 		if(results.length > 0){
 			var userFriends = results[0].friends;
+			if(userFriends == null || userFriends == undefined){
+				userFriends = "";
+			}
 
 			connection.query("SELECT * FROM User", function(error, results, fields){
 				if(results.length > 0){

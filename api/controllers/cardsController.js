@@ -1,4 +1,4 @@
-    'use strict';
+'use strict';
 var _ = require('lodash');
 var mysql = require('mysql');
 var request = require("../manager/requestManager");
@@ -18,11 +18,18 @@ exports.booster = function(req, res){
 
 	console.log("/cards/"+ idUser + "/booster/" + nbCartes);
 	var idPokemons = [];
-	var pokemons = [];
+	var idCards = [];
+	var nbPokemon = 0;
 	var finalResult = {
 		"idUser": idUser,
 		"cards": []
 	};
+
+	if(nbCartes < 20){
+		nbPokemon = 20;
+	}else{
+		nbPokemon = nbCartes;
+	}
 
 	for(let i=0; i<20; i++){
 		idPokemons.push(Math.floor(Math.random()*802)+1);
@@ -34,7 +41,7 @@ exports.booster = function(req, res){
 	idPokemons.forEach(function(id){
 		path += id + "|";
 	});
-	
+
 	request.HTTPS(url, path, "GET")
 	.then(function(response){
 		var tmpCard = response;
@@ -56,10 +63,15 @@ exports.booster = function(req, res){
 						"price": 0
 					}
 				}
+				idCards.push(tmp.id);
 				finalResult.cards.push(tmp);
 			}
 		}
-		return request.HTTP('127.0.0.1', '/user/addCard', "POST", finalResult);
+		var tmp = {
+			"idUser": finalResult.idUser,
+			"cards": idCards
+		}
+		return request.HTTP('127.0.0.1', '/user/addCard', "POST", tmp);
 	})
 	.catch(function(error){
 		res.end();
@@ -92,17 +104,23 @@ exports.cardsPokemon = function(req, res){
 	})
 }
 
+exports.getBoosters = function(req, res){
+	//console.log("/cards/boosters");
+	res.json(listBoosters());
+}
+
 exports.buyCards = function(req, res){
 	console.log("/cards/buy");
 
 	var nbCartes = req.body.nbCartes;
 	var idUser = req.body.idUser;
+	var tmpBooster = listBoosters(nbCartes);
 
 	connection.query("SELECT * FROM User WHERE idUser="+idUser, function(error, results, fields){
 		if(results.length > 0){
-			if(results[0].pokeCoin >= nbCartes * PRICE_UNIT_CARD){
+			if(results[0].pokeCoin >= tmpBooster.price){
 				var pokeCoin = results[0].pokeCoin;
-				pokeCoin -= nbCartes * PRICE_UNIT_CARD;
+				pokeCoin -= tmpBooster.price;
 
 				request.HTTP("127.0.0.1", "/cards/"+idUser+"/booster/"+nbCartes, "GET")
 				.then(function(response){
@@ -114,4 +132,44 @@ exports.buyCards = function(req, res){
 			}
 		}
 	})
+}
+
+var listBoosters = function(nbCartes){
+	var boosters =[
+	{
+		"description": "Pack de 5 Cartes",
+		"img": "https://www.lannier.fr/pokecard/booster5.png",
+		"nbCartes": 5,
+		"price": PRICE_UNIT_CARD*5
+	},
+	{
+		"description": "Pack de 10 Cartes",
+		"img": "https://www.lannier.fr/pokecard/booster10.png",
+		"nbCartes": 10,
+		"price": PRICE_UNIT_CARD*9
+	},
+	{
+		"description": "Pack de 20 Cartes",
+		"img": "https://www.lannier.fr/pokecard/booster20.png",
+		"nbCartes": 20,
+		"price": PRICE_UNIT_CARD*16
+	},
+	{
+		"description": "Pack de 50 Cartes",
+		"img": "https://www.lannier.fr/pokecard/booster50.png",
+		"nbCartes": 50,
+		"price": PRICE_UNIT_CARD*42
+	}];
+	console.log(boosters)
+	if(nbCartes == undefined){
+		return boosters;
+	} else {
+		var tmp;
+		boosters.forEach(function(booster){
+			if(booster.nbCartes == nbCartes){
+				tmp = booster;
+			}
+		})
+		return tmp;
+	}
 }

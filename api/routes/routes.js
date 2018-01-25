@@ -14,14 +14,14 @@ module.exports = function(app) {
 	app.route('/verify').post(authController.verify);
 
 	//USER
-	app.route('/user/addCard').post(userController.addCard);
-	app.route('/user/:idUser').get(userController.getUser);
-	app.route('/user/removeCard').delete(userController.removeCard);
 	app.route('/user/:idUser/pokedex').get(userController.userPokedex);
+	app.route('/user/addCard').post(userController.addCard);
+	app.route('/user/removeCard').delete(userController.removeCard);
 	app.route('/user/:idUser/:idPokemon/cards').get(userController.getCardsPokemonUser);
 	app.route('/user/:idUser/addFriend').post(userController.addFriend);
 	app.route('/user/:idUser/getFriends').get(userController.getFriends);
 	app.route('/user/:idUser/delFriend').post(userController.delFriend);
+	app.route('/user/:idUser').get(userController.getUser);
 	app.route('/user/addPokeCoins').post(userController.addPokeCoins);
 
 	//POKEMON
@@ -32,6 +32,7 @@ module.exports = function(app) {
 	app.route('/cards/:idUser/booster/:nbCartes').get(cardsController.booster);
 	app.route('/cards/:idPokemon').get(cardsController.cardsPokemon);
 	app.route('/cards/buy').post(cardsController.buyCards);
+	app.route('/cards/list/boosters').get(cardsController.getBoosters);
 
 	//EXCHANGES
 	app.route('/exchange/send').post(exchangeController.send);

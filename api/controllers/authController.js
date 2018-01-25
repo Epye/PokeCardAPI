@@ -46,10 +46,14 @@ exports.signup = function(req, res) {
 				connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 					if(results.length > 0) {
 						var url = "127.0.0.1";
-						var path = "/cards/"+results[0].idUser+"/booster";
+						var path = "/cards/"+results[0].idUser+"/booster/10";
 						request.HTTP(url, path, "GET")
 						.then(function(response){
-							res.json(response);
+							connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
+								if(results.length > 0) {
+									res.json(formatResponse(results[0]));
+								}
+							})
 						})
 						.catch(function(error){
 							res.json(formatResponse(results[0]));
@@ -78,10 +82,14 @@ exports.verify = function(req, res){
 				connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
 					if(results.length > 0) {
 						var url = "127.0.0.1";
-						var path = "/cards/"+results[0].idUser+"/booster";
+						var path = "/cards/"+results[0].idUser+"/booster/10";
 						request.HTTP(url, path, "GET")
 						.then(function(response){
-							res.json(response);
+							connection.query('SELECT * FROM User WHERE pseudo LIKE "' + pseudo + '"', function(error, results, fields) {
+								if(results.length > 0) {
+									res.json(formatResponse(results[0]));
+								}
+							})
 						})
 						.catch(function(error){
 							res.json(formatResponse(results[0]));

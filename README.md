@@ -33,7 +33,7 @@ Format Retour:
 	"pseudo": String, 
 	"listePokemon": ArrayList<String>, 
 	"listeCards": ArrayList<String>,
-	"frinds": ArrayList<String>,
+	"friends": ArrayList<String>,
 	"pokeCoin": Int,
 	"picture": String,
 	"idAccount": Int
@@ -56,7 +56,7 @@ Format Retour:
 	"pseudo": String, 
 	"listePokemon": ArrayList<String>, 
 	"listeCards": ArrayList<String>,
-	"frinds": ArrayList<String>,
+	"friends": ArrayList<String>,
 	"pokeCoin": Int,
 	"picture": String,
 	"idAccount": Int
@@ -80,7 +80,7 @@ Format Retour:
 	"pseudo": String, 
 	"listePokemon": ArrayList<String>, 
 	"listeCards": ArrayList<String>,
-	"frinds": ArrayList<String>,
+	"friends": ArrayList<String>,
 	"pokeCoin": Int,
 	"picture": String,
 	"idAccount": Int
@@ -125,7 +125,7 @@ Format Retour:
 	"pseudo": String, 
 	"listePokemon": ArrayList<String>, 
 	"listeCards": ArrayList<String>,
-	"frinds": ArrayList<String>,
+	"friends": ArrayList<String>,
 	"pokeCoin": Int,
 	"picture": String,
 	"idAccount": Int
@@ -145,7 +145,7 @@ Format Retour:
 	"pseudo": String, 
 	"listePokemon": ArrayList<String>, 
 	"listeCards": ArrayList<String>,
-	"frinds": ArrayList<String>,
+	"friends": ArrayList<String>,
 	"pokeCoin": Int,
 	"picture": String,
 	"idAccount": Int
@@ -162,6 +162,7 @@ Format Retour:
 }]
 
 ### POST /user/:idUser/addFriend
+Route pour ajouter des amis
 
 Format attendu:
 {
@@ -169,6 +170,7 @@ Format attendu:
 }
 
 ### GET /user/:idUser/getFriends
+Route pour récupérer les amis
 
 Format retour:
 [{
@@ -179,10 +181,26 @@ Format retour:
 }]
 
 ### DELETE /user/:idUser/delFriend
+Route pour supprimer un ami
 
 Format attendu:
 {
 	"pseudoFriend": String
+}
+
+### GET /user/:idUser
+Route pour récupérer les informations d'un utilisateur
+
+Format Retour: 
+{
+	"idUser": String, 
+	"pseudo": String, 
+	"listePokemon": ArrayList<String>, 
+	"listeCards": ArrayList<String>,
+	"friends": ArrayList<String>,
+	"pokeCoin": Int,
+	"picture": String,
+	"idAccount": Int
 }
 
 ## POKEMON:
@@ -218,19 +236,19 @@ Format Retour:
 }
 
 ## CARDS :
-### GET /cards/:idUser/booster
-Route pour ouvrir un booster de 10 cartes
+### GET /cards/:idUser/booster/:nbCartes
+Route pour ouvrir un booster de nbCartes cartes
 
 Format Retour:
 {
-	"idUser": String, 
-	"pseudo": String, 
-	"listePokemon": ArrayList<String>, 
-	"listeCards": ArrayList<String>,
-	"frinds": ArrayList<String>,
-	"pokeCoin": Int,
-	"picture": String,
-	"idAccount": Int
+    "idUser": "27",
+    "cards": [
+        {
+            "id": String,
+            "urlPicture": String,
+            "idPokemon": Int,
+            "price": Int
+        }]
 }
 
 ### GET /cards/:idPokemon
@@ -242,6 +260,17 @@ Format Retour:
 	"idPokemon": Int,
 	"urlPicture": String
 }
+
+### GET /cards/list/boosters
+Route pour récupérer les différents boosters
+
+Format Retour:
+[{
+	"descrpition": String,
+	"img": String,
+	"nbCartes": Int,
+	"price": Int
+}]
 
 ## EXCHANGE
 ### POST /exchange/send
@@ -270,13 +299,25 @@ Format Retour:
 Route pour récupérer tous les échanges que l'utilisateur a en cours
 
 Format Retour:
-{
+[{
 	"idEchange": Int,
 	"idSender": Int,
 	"idReceiver": Int,
 	"idCard": String,
 	"stauts": String
-}
+}]
+
+### DELETE /exchange/:idEchange
+Route pour supprimer un échange
+
+Format Retour:
+[{
+	"idEchange": Int,
+	"idSender": Int,
+	"idReceiver": Int,
+	"idCard": String,
+	"stauts": String
+}]
 
 ## OPTION
 ### POST /option/editPseudo
@@ -288,22 +329,27 @@ Format attendu:
 	"pseudo": String
 }
 
-### POST /option/verifyPseudo
-Route pour vérifier si le pseudo existe déjà.
-
-Format attendu: 
-{
-	"pseudo": String
-}
+## QUIZZ
+### GET /quizz/category
+Route pour récupérer la liste des catégories du quizz
 
 Format Retour:
--s'il n'existe pas:
-{
-	"pseudo": false
-}
--s'il existe : code 400
+[
+    {
+        "id": Int,
+        "name": String
+    }
+]
 
-## QUIZZ
+### GET /quizz/:quizzId
+Route pour récupérer les questions du quizz
+
+Format Retour:
+[{
+	"question": String,
+	"correct": String
+}]
+
 ### POST /quizz/results
 Route pour récupérer les gains du quizz
 Format attendu:
@@ -323,25 +369,25 @@ Format Retour:
 # BD
 
 CREATE TABLE `User` (
-`idUser` int(255) unsigned NOT NULL AUTO_INCREMENT,
-`pseudo` varchar(255) NOT NULL DEFAULT '',
-`password` varchar(255) NOT NULL,
-`listePokemon` longtext,
-`listeCards` longtext,
-`pokeCoin` int(11) DEFAULT '0',
-`friends` varchar(255) DEFAULT '',
-`picture` longtext,
-`idAccount` varchar(255) DEFAULT NULL,
-PRIMARY KEY (`idUser`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+  `idUser` int(255) unsigned NOT NULL AUTO_INCREMENT,
+  `pseudo` varchar(255) NOT NULL DEFAULT '',
+  `password` varchar(255) NOT NULL,
+  `listePokemon` longtext,
+  `listeCards` longtext,
+  `pokeCoin` int(11) DEFAULT '500',
+  `friends` longtext,
+  `picture` longtext,
+  `idAccount` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`idUser`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `Exchange` (
-`idEchange` int(255) unsigned NOT NULL AUTO_INCREMENT,
-`idSender` varchar(255) NOT NULL DEFAULT '',
-`idReceiver` varchar(255) NOT NULL,
-`idCard` varchar(255) NOT NULL,
-`cardName` varchar(255) NOT NULL,
-`cardPicture` varchar(255) NOT NULL,
-`status` varchar(255) DEFAULT '',
-PRIMARY KEY (`idEchange`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+  `idEchange` int(255) unsigned NOT NULL AUTO_INCREMENT,
+  `idSender` int(255) NOT NULL,
+  `idReceiver` int(11) DEFAULT NULL,
+  `idCard` varchar(255) DEFAULT '',
+  `status` varchar(255) DEFAULT NULL,
+  `cardName` varchar(255) DEFAULT NULL,
+  `cardPicture` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`idEchange`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
