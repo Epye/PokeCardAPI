@@ -266,7 +266,7 @@ Route pour récupérer les différents boosters
 
 Format Retour:
 [{
-	"descrpition": String,
+	"description": String,
 	"img": String,
 	"nbCartes": Int,
 	"price": Int
