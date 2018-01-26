@@ -348,7 +348,16 @@ exports.addPokeCoins = function(req, res){
 	});
 }
 
-
+exports.getListeProfilPicture = function(req, res){
+	console.log("/user/picture/list");
+	connection.query("SELECT * FROM profilPicture", function(error, results, fields){
+		if(results.length > 0){
+			res.json(results);
+		}else{
+			res.json([]);
+		}
+	});
+}
 
 function compareCard(element){
 	return element == this.id;

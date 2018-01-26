@@ -14,6 +14,8 @@ lancer pm2 start serve.js
 
 l'adresse est ensuite localhost:3000
 
+pour voir les logs, il faut faire pm2 logs
+
 # Liste des routes de l'API : 
 
 ## AUTHENTIFICATION: 
@@ -402,3 +404,7 @@ CREATE TABLE `Exchange` (
   `cardPicture` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`idEchange`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `profilPicture` (
+  `profilPicture` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -15,15 +15,18 @@ module.exports = function(app) {
 	app.route('/verify').post(authController.verify);
 
 	//USER
-	app.route('/user/:idUser/pokedex').get(userController.userPokedex);
-	app.route('/user/addCard').post(userController.addCard);
-	app.route('/user/removeCard').delete(userController.removeCard);
-	app.route('/user/:idUser/:idPokemon/cards').get(userController.getCardsPokemonUser);
-	app.route('/user/:idUser/addFriend').post(userController.addFriend);
-	app.route('/user/:idUser/getFriends').get(userController.getFriends);
-	app.route('/user/:idUser/delFriend').post(userController.delFriend);
 	app.route('/user/:idUser').get(userController.getUser);
+	app.route('/user/:idUser/pokedex').get(userController.userPokedex);
+	app.route('/user/:idUser/:idPokemon/cards').get(userController.getCardsPokemonUser);
+	app.route('/user/:idUser/getFriends').get(userController.getFriends);
+	app.route('/user/picture/list').get(userController.getListeProfilPicture);
+
+	app.route('/user/addCard').post(userController.addCard);
+	app.route('/user/:idUser/addFriend').post(userController.addFriend);
+	app.route('/user/:idUser/delFriend').post(userController.delFriend);
 	app.route('/user/addPokeCoins').post(userController.addPokeCoins);
+
+	app.route('/user/removeCard').delete(userController.removeCard);
 
 	//POKEMON
 	app.route('/pokedex').get(pokemonController.pokedex);
@@ -32,24 +35,29 @@ module.exports = function(app) {
 	//CARTES
 	app.route('/cards/:idUser/booster/:nbCartes').get(cardsController.booster);
 	app.route('/cards/:idPokemon').get(cardsController.cardsPokemon);
-	app.route('/cards/buy').post(cardsController.buyCards);
 	app.route('/cards/list/boosters').get(cardsController.getBoosters);
 
+	app.route('/cards/buy').post(cardsController.buyCards);
+
 	//EXCHANGES
+	app.route('/exchange/:idReceiver').get(exchangeController.getExchange);
+
 	app.route('/exchange/send').post(exchangeController.send);
 	app.route('/exchange/add').post(exchangeController.add);
-	app.route('/exchange/:idReceiver').get(exchangeController.getExchange);
+
 	app.route('/exchange/:idEchange').delete(exchangeController.remove);
 
 	//QUIZZ
 	app.route('/quizz/category').get(quizzController.category);
 	app.route('/quizz/:quizzId').get(quizzController.quizz);
+
 	app.route('/quizz/results').post(quizzController.results);
 
 	//OPTION
 	app.route('/option/editPseudo').post(optionController.editPseudo);
 	app.route('/option/verifyPseudo').post(optionController.verifyPseudo);
 	app.route('/option/editZipCode').post(optionController.editZipCode);
+	app.route('/option/editProfilPicture').post(optionController.editProfilPicture);
 
 	//WEATHER
 	app.route('/weather/:idUser').get(weatherController.weather);

@@ -56,10 +56,24 @@ exports.editZipCode = function(req, res){
 
 	request.HTTPS(url, path, "GET")
 	.then(function(response){
-		connection.query('UPDATE User SET zipCode="' + zipCode + '" WHERE idUser=' + idUser, function(error, results, fields){});
-		res.json({"OK": "OK"})
+		if(response.cod != 404){
+			connection.query('UPDATE User SET zipCode="' + zipCode + '" WHERE idUser=' + idUser, function(error, results, fields){});
+			res.json({"OK": "OK"})
+		}else{
+			res.sendStatus(400)
+		}
 	})
 	.catch(function(response){
-		res.json({"zipCode": false})
+		res.sendStatus(400)
 	})
+}
+
+exports.editProfilPicture = function(req, res){
+	console.log("/option/editProfilPicture");
+
+	var idUser = req.body.idUser;
+	var profilPicture = req.body.profilPicture;
+	connection.query('UPDATE User SET picture="' + profilPicture + '" WHERE idUser=' + idUser, function(error, results, fields){
+		res.json({"OK": "OK"});
+	});
 }
