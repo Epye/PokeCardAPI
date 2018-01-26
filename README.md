@@ -406,5 +406,5 @@ CREATE TABLE `Exchange` (
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `profilPicture` (
-  `profilPicture` longtext NOT NULL
+  `url` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
