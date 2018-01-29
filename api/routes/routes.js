@@ -38,6 +38,7 @@ module.exports = function(app) {
 	app.route('/cards/list/boosters').get(cardsController.getBoosters);
 
 	app.route('/cards/buy').post(cardsController.buyCards);
+	app.route('/cards/sell').post(cardsController.sellCards);
 
 	//EXCHANGES
 	app.route('/exchange/:idReceiver').get(exchangeController.getExchange);
