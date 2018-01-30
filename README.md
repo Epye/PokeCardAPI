@@ -333,6 +333,18 @@ Format Retour:
 	"stauts": String
 }]
 
+## CHUCK NORRIS
+### GET /chuckNorris/:idUser/random
+Route permettant de récupérer un Chuck Norris Fact et de faire gagner des pièces à l'utilisateur
+
+Format Retour:
+{
+	"picture": String,
+	"fact": String,
+	"pokeCoinsWin": Int
+}
+
+
 ## OPTION
 ### POST /option/editPseudo
 Route pour éditer le pseudo d'un compte.

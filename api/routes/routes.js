@@ -8,6 +8,7 @@ module.exports = function(app) {
 	var userController = require('../controllers/userController');
 	var quizzController = require('../controllers/quizzController');
 	var weatherController = require('../controllers/weatherController');
+	var chuckNorrisController = require('../controllers/chuckNorrisController');
 
 	//AUTHENTIFICATION
 	app.route('/login').post(authController.login);
@@ -53,6 +54,9 @@ module.exports = function(app) {
 	app.route('/quizz/:quizzId').get(quizzController.quizz);
 
 	app.route('/quizz/results').post(quizzController.results);
+
+	//CHUCK NORRIS FACTS
+	app.route('/chuckNorris/:idUser/random').get(chuckNorrisController.getChuckNorrisFact);
 
 	//OPTION
 	app.route('/option/editPseudo').post(optionController.editPseudo);
