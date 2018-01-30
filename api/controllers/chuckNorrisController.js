@@ -7,7 +7,11 @@ exports.getChuckNorrisFact = function(req, res){
 	var idUser = req.params.idUser;
 	console.log("/chuckNorris/"+idUser+"/random");
 
-	var finalResult = {};
+	var finalResult = {
+		"picture": "",
+		"fact": "",
+		"pokeCoinsWin": 0
+	};
 
 	var url = "https://api.chucknorris.io";
 	var path = "/jokes/random";
@@ -23,9 +27,7 @@ exports.getChuckNorrisFact = function(req, res){
 			"pokeCoins": 20,
 			"idUser": idUser
 		}
-		return request.HTTP("127.0.0.1", "/user/addPokeCoins", "POST", body);
-	})
-	.then(function(response){
 		res.json(finalResult);
+		request.HTTP("127.0.0.1", "/user/addPokeCoins", "POST", body);
 	})
 }
