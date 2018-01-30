@@ -28,7 +28,7 @@ exports.getChuckNorrisFact = function(req, res){
 			"pokeCoins": 20,
 			"idUser": idUser
 		}
-		return translate(category.name, {to: 'fr'});
+		return translate(finalResult.fact, {to: 'fr'});
 	})
 	.then(function(response){
 		finalResult.fact = response.text;
