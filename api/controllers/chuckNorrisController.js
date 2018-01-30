@@ -35,4 +35,7 @@ exports.getChuckNorrisFact = function(req, res){
 		res.json(finalResult);
 		request.HTTP("127.0.0.1", "/user/addPokeCoins", "POST", body);
 	})
+	.catch(function(response){
+		res.json(finalResult);
+	})
 }
