@@ -20,7 +20,8 @@ exports.getChuckNorrisFact = function(req, res){
 			"pokeCoinsWin": 20
 		}
 		var body = {
-			"pokeCoins": 20
+			"pokeCoins": 20,
+			"idUser": idUser
 		}
 		return request.HTTP("127.0.0.1", "/user/addPokeCoins", "POST", body);
 	})
