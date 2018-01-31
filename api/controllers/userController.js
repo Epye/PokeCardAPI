@@ -120,6 +120,55 @@ exports.addCard = function(req, res){
 	});
 }
 
+exports.addCardNFC = function(req, res){
+	console.log('/user/addCardNFC');
+
+	var idCard = req.body.idCard;
+	var idUser = req.body.idUser;
+
+	connection.query("SELECT * FROM User WHERE idUser="+idUser, function(error, results, fields){
+		if(results.length > 0){
+			var userCards = formatArray(results[0].listeCards);
+			var userPokemon = results[0].listePokemon;
+			if(userPokemon == null || userPokemon == undefined){
+				userPokemon = "";
+			}
+
+			var url = "https://api.pokemontcg.io";
+			var path = "/v1/cards?id="+idCard;
+
+			request.HTTPS(url, path, "GET")
+			.then(function(response){
+				userCards.push(card);
+				if(!userPokemon.includes(response.cards[0].nationalPokedexNumber)){
+					userPokemon += ","+response.cards[0].nationalPokedexNumber;
+				}
+
+				userCards = userCards.toString();
+
+				if(userPokemon.charAt(0) == ","){
+					userPokemon = userPokemon.replace(",", "");
+				}
+				if(userCards.charAt(0) == ","){
+					userCards = userCards.replace(",", "");
+				}
+
+				var finalResult = {
+					"id": idCard,
+					"urlPicture": response.cards[0].imageUrl,
+					"idPokemon": response.cards[0].nationalPokedexNumber,
+					"price": price(response.cards[0].rarity)
+				}
+				connection.query("UPDATE User SET listePokemon='" + userPokemon + "', listeCards='" + userCards + "' WHERE idUser="+idUser, function(error, results, fields){
+					res.json(finalResult);
+				});
+			})
+		}else{
+			res.sendStatus(400)
+		}
+	});
+}
+
 exports.removeCard = function(req, res){
 	console.log('/user/removeCard');
 

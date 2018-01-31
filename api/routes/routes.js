@@ -23,6 +23,7 @@ module.exports = function(app) {
 	app.route('/user/picture/list').get(userController.getListeProfilPicture);
 
 	app.route('/user/addCard').post(userController.addCard);
+	app.route('/user/addCardNFC').post(userController.addCardNFC);
 	app.route('/user/:idUser/addFriend').post(userController.addFriend);
 	app.route('/user/:idUser/delFriend').post(userController.delFriend);
 	app.route('/user/addPokeCoins').post(userController.addPokeCoins);
