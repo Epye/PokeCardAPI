@@ -24,16 +24,18 @@ exports.getChuckNorrisFact = function(req, res){
 			"fact": response.value,
 			"pokeCoinsWin": 20
 		}
-		var body = {
-			"pokeCoins": 20,
-			"idUser": idUser
-		}
 		return translate(finalResult.fact, {to: 'fr'});
 	})
 	.then(function(response){
 		finalResult.fact = response.text;
+		var body = {
+			"pokeCoins": 20,
+			"idUser": idUser
+		}
+		return request.HTTP("127.0.0.1", "/user/addPokeCoins", "POST", body);
+	})
+	.then(function(response){
 		res.json(finalResult);
-		request.HTTP("127.0.0.1", "/user/addPokeCoins", "POST", body);
 	})
 	.catch(function(response){
 		res.json(finalResult);
