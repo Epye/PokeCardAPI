@@ -139,7 +139,7 @@ exports.addCardNFC = function(req, res){
 
 			request.HTTPS(url, path, "GET")
 			.then(function(response){
-				userCards.push(card);
+				userCards.push(idCard);
 				if(!userPokemon.includes(response.cards[0].nationalPokedexNumber)){
 					userPokemon += ","+response.cards[0].nationalPokedexNumber;
 				}
