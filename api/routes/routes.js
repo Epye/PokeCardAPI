@@ -9,6 +9,7 @@ module.exports = function (app) {
 	var quizzController = require('../controllers/quizzController');
 	var weatherController = require('../controllers/weatherController');
 	var chuckNorrisController = require('../controllers/chuckNorrisController');
+	var DBController = require('../controllers/DBController');
 
 	//AUTHENTIFICATION
 	app.route('/login').post(authController.login);
@@ -68,5 +69,7 @@ module.exports = function (app) {
 	//WEATHER
 	app.route('/weather/:idUser').get(weatherController.weather);
 
-	app.route('/convert').get(optionController.convertImageToBase64);
+	//DB
+	app.route('/convert').get(DBController.convertImageToBase64);
+	app.route('/initDB').get(DBController.initDB);
 };

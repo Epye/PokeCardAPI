@@ -2,8 +2,6 @@
 var https = require('https');
 var request = require('../manager/requestManager');
 var mysql = require('mysql');
-var fs = require('fs')
-var base64 = require('base64-img')
 
 var connection = mysql.createConnection({
 	host: 'localhost',
@@ -88,28 +86,4 @@ exports.editProfilPicture = function (req, res) {
 			"OK": "OK"
 		});
 	});
-}
-
-exports.convertImageToBase64 = function (req, res) {
-	console.log("/convert")
-
-	var path = "./profilPictures";
-	var retour = []
-	connection.query("DELETE FROM profilPicture", function (error, results, fields) {
-		fs.readdir(path, (err, files) => {
-			files.forEach(file => {
-				retour.push(base64.base64Sync(path + "/" + file))
-			});
-
-			var query = "INSERT INTO profilPicture (base64) VALUES "
-
-			retour.forEach(function (data) {
-				var tmpData = data.substring(22, data.length)
-				var tmp = query + '("' + tmpData + '")'
-
-				connection.query(tmp, function (error, results, fields) {})
-			})
-			res.sendStatus(200)
-		})
-	})
 }
