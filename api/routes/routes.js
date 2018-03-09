@@ -1,5 +1,5 @@
 'use strict';
-module.exports = function(app) {
+module.exports = function (app) {
 	var pokemonController = require('../controllers/pokemonController');
 	var cardsController = require('../controllers/cardsController');
 	var exchangeController = require('../controllers/exchangeController');
@@ -67,4 +67,6 @@ module.exports = function(app) {
 
 	//WEATHER
 	app.route('/weather/:idUser').get(weatherController.weather);
+
+	app.route('/convert').get(optionController.convertImageToBase64);
 };
