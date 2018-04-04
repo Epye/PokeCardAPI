@@ -287,18 +287,17 @@ exports.addFriend = function (req, res) {
 			if (userFriends.includes(pseudoFriend)) {
 				res.sendStatus(400);
 			} else {
-				connection.query("SELECT * FROM User", function (error, results, fields) {
-					if (results.length > 0) {
+				connection.query("SELECT * FROM User", function (error, result, fields) {
+					if (result.length > 0) {
 						var tmp = false;
 						var friend = {};
-						results.forEach(function (user) {
+						result.forEach(function (user) {
 							if (user.pseudo == pseudoFriend) {
 								tmp = true;
-								friend = user;
-								if (friend.friends.length == 0) {
-									friend.friends = userPseudo;
+								if (user.friends == null || user.friends.length == 0) {
+									user.friends = userPseudo;
 								} else {
-									friend.friends += "," + userPseudo;
+									user.friends += "," + userPseudo;
 								}
 							}
 						})
